@@ -15,6 +15,7 @@ public class RunTimeDialogueNode
     public string SpeakerName;
     public string DialogueText;
     public List<ChoiceData> Choices = new List<ChoiceData>();
+    public Sprite Sprite;
     public string NextNodeID;
 }
 

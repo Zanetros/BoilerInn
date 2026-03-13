@@ -72,8 +72,8 @@ MonoBehaviour:
           serializedVersion: 2
           x: 881
           y: 327
-          width: 2057
-          height: 613
+          width: 1988
+          height: 637
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 15302792157531407676
@@ -392,9 +392,11 @@ MonoBehaviour:
           m_KeyList:
           - Speaker
           - Dialogue
+          - Sprite
           m_ValueList:
           - rid: 2385519369259581513
           - rid: 2385519369259581514
+          - rid: 2385519414522413142
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -473,9 +475,11 @@ MonoBehaviour:
           m_KeyList:
           - Speaker
           - Dialogue
+          - Sprite
           m_ValueList:
           - rid: 2385519369259581523
           - rid: 2385519369259581524
+          - rid: 2385519414522413143
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -726,6 +730,7 @@ MonoBehaviour:
           - Choice Text 0
           - Choice Text 2
           - Choice Text 1
+          - Sprite
           m_ValueList:
           - rid: 2385519392343195729
           - rid: 2385519392343195730
@@ -733,6 +738,7 @@ MonoBehaviour:
           - rid: 2385519392343195732
           - rid: 2385519414522413125
           - rid: 2385519414522413124
+          - rid: 2385519414522413147
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -888,9 +894,11 @@ MonoBehaviour:
           m_KeyList:
           - Speaker
           - Dialogue
+          - Sprite
           m_ValueList:
           - rid: 2385519392343195741
           - rid: 2385519392343195742
+          - rid: 2385519414522413144
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1038,9 +1046,11 @@ MonoBehaviour:
           m_KeyList:
           - Speaker
           - Dialogue
+          - Sprite
           m_ValueList:
           - rid: 2385519392343195765
           - rid: 2385519392343195766
+          - rid: 2385519414522413145
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1124,9 +1134,11 @@ MonoBehaviour:
           m_KeyList:
           - Speaker
           - Dialogue
+          - Sprite
           m_ValueList:
           - rid: 2385519392343195773
           - rid: 2385519392343195774
+          - rid: 2385519414522413146
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1459,3 +1471,27 @@ MonoBehaviour:
           m_PortDirection: 1
           m_PortOrientation: 0
           m_Title: in
+    - rid: 2385519414522413142
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+    - rid: 2385519414522413143
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+    - rid: 2385519414522413144
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+    - rid: 2385519414522413145
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+    - rid: 2385519414522413146
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+    - rid: 2385519414522413147
+      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
+      data:
+        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}

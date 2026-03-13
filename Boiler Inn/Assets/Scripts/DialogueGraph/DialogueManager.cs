@@ -13,6 +13,7 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialoguePanel;
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
+    public Image portrait;
     
     [Header("Choice Button UI")]
     public Button choiceButtonPrefab;
@@ -68,6 +69,8 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         speakerNameText.SetText(currentNode.SpeakerName);
         dialogueText.SetText(currentNode.DialogueText);
+        portrait.sprite = currentNode.Sprite;
+        
 
         foreach (Transform child in choiceButtonContainer)
         {

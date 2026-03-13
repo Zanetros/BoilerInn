@@ -29,6 +29,7 @@ public class DialogueNode : Node
         context.AddOutputPort("out").Build();
         
         context.AddInputPort<string>("Speaker").Build();
+        context.AddInputPort<Sprite>("Sprite").WithDisplayName("Character Sprite").WithConnectorUI(PortConnectorUI.Arrowhead).Build();
         context.AddInputPort<string>("Dialogue").Build();
     }
 }
@@ -44,6 +45,7 @@ public class ChoiceNode : Node
         
         context.AddInputPort<string>("Speaker").Build();
         context.AddInputPort<string>("Dialogue").Build();
+        context.AddInputPort<Sprite>("Sprite").WithDisplayName("Character Sprite").WithConnectorUI(PortConnectorUI.Arrowhead).Build();
         
         var option = GetNodeOptionByName(optionID);
         option.TryGetValue(out int portCount);

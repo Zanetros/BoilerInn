@@ -54,6 +54,7 @@ public class DialogueGraphImporter : ScriptedImporter
     {
         runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
         runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
+        runtimeNode.Sprite = GetPortValue<Sprite>(node.GetInputPortByName("Sprite"));
         
         var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
         if (nextNodePort != null)
@@ -66,6 +67,7 @@ public class DialogueGraphImporter : ScriptedImporter
     {
         runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
         runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
+        runtimeNode.Sprite = GetPortValue<Sprite>(node.GetInputPortByName("Sprite"));
     
         var choiceOutputPorts = node.GetOutputPorts().Where(p => p.name.StartsWith("Choice "));
     
@@ -101,5 +103,7 @@ public class DialogueGraphImporter : ScriptedImporter
         
         port.TryGetValue(out T fallbackValue);
         return fallbackValue;
+        
+        
     }
 }
