@@ -65,26 +65,26 @@ public class DialogueGraphImporter : ScriptedImporter
     private void ProcessChoiceNode(ChoiceNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
     {
         runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
-        runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
-        
-        var choiceOutputPorts = node.GetOutputPorts().Where(p =>p.name.StartsWith("Choice "));
-        
+        runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
+    
+        var choiceOutputPorts = node.GetOutputPorts().Where(p => p.name.StartsWith("Choice "));
+    
         foreach (var outputPort in choiceOutputPorts)
         {
-            var index = outputPort.name.Substring("Choice ".Length);
-            var textPort = node.GetOutputPortByName($"Choice Text{index}");
-
+            string choiceText = outputPort.name; 
+        
             var choiceData = new ChoiceData
             {
-                ChoiceText = GetPortValue<string>(textPort), DestinationNodeID = outputPort.firstConnectedPort !=
-                    null
-                        ? nodeIDMap[outputPort.firstConnectedPort.GetNode()]
-                        : null
+                ChoiceText = choiceText,
+                DestinationNodeID = outputPort.firstConnectedPort != null
+                    ? nodeIDMap[outputPort.firstConnectedPort.GetNode()]
+                    : null
             };
-            
+        
             runtimeNode.Choices.Add(choiceData);
         }
     }
+    
 
     private T GetPortValue<T>(IPort port)
     {

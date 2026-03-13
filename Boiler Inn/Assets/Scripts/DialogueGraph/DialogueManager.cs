@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -12,6 +13,10 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialoguePanel;
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
+    
+    [Header("Choice Button UI")]
+    public Button choiceButtonPrefab;
+    public Transform choiceButtonContainer;
     
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
     private RunTimeDialogueNode currentNode;
@@ -35,7 +40,7 @@ public class DialogueManager : MonoBehaviour
 
     public void Update()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame && currentNode != null)
+        if (Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
         {
             if (!string.IsNullOrEmpty(currentNode.NextNodeID))
             {
@@ -48,6 +53,7 @@ public class DialogueManager : MonoBehaviour
         }
     }
 
+    // ReSharper disable Unity.PerformanceAnalysis
     private void ShowNode(string nodeID)
     {
         
@@ -62,11 +68,51 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(true);
         speakerNameText.SetText(currentNode.SpeakerName);
         dialogueText.SetText(currentNode.DialogueText);
+
+        foreach (Transform child in choiceButtonContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        if (currentNode.Choices.Count > 0)
+        {
+            foreach (var choice in currentNode.Choices)
+            {
+                Button button = Instantiate(choiceButtonPrefab, choiceButtonContainer);
+
+                TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
+                if (buttonText != null)
+                {
+                    buttonText.text = choice.ChoiceText;
+                }
+
+                if (button != null)
+                {
+                    button.onClick.AddListener(() =>
+                    {
+                        if (!string.IsNullOrEmpty(choice.DestinationNodeID))
+                        {
+                            ShowNode(choice.DestinationNodeID);
+                        }
+                        else
+                        {
+                            EndDialogue();
+                        }
+                    });
+
+                }
+            }
+        }
     }
 
     private void EndDialogue()
     {
         dialoguePanel.SetActive(false);
         currentNode = null;
+
+        foreach (Transform child in choiceButtonContainer)
+        {
+            Destroy(child.gameObject);
+        }
     }
 }
