@@ -34,12 +34,6 @@ public class ChipsSpawner : MonoBehaviour
 
     void SpawnRandomObject()
     {
-        if (spawnPoints.Length == 0 || prefabs.Length == 0)
-        {
-            Debug.LogWarning("Spawn points ou prefabs não atribuídos!");
-            return;
-        }
-
         // Escolhe um ponto de spawn aleatório
         int randomPointIndex = Random.Range(0, spawnPoints.Length);
         Transform spawnPoint = spawnPoints[randomPointIndex];
@@ -50,34 +44,5 @@ public class ChipsSpawner : MonoBehaviour
 
         // Instancia o objeto
         GameObject spawnedObject = Instantiate(prefab, spawnPoint.position, Quaternion.identity);
-
-        // Adiciona um componente de movimento (se não existir no prefab)
-        Mover mover = spawnedObject.GetComponent<Mover>();
-        if (mover == null)
-        {
-            mover = spawnedObject.AddComponent<Mover>();
-        }
-        mover.speed = moveSpeed;
-        mover.direction = moveDirection;
-    }
-}
-
-// Componente simples para mover o objeto
-public class Mover : MonoBehaviour
-{
-    public float speed;
-    public Vector3 direction;
-
-    void Update()
-    {
-        transform.Translate(direction * speed * Time.deltaTime);
-    }
-
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.gameObject.tag == "Out")
-        {
-            Destroy(gameObject);
-        }
     }
 }

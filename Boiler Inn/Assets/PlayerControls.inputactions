@@ -16,12 +16,30 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "StartDialogue",
+                    "name": "Red Chip",
                     "type": "Button",
-                    "id": "d551cc97-88af-4665-847c-b3b42b37cf34",
+                    "id": "43174759-ecc4-45d7-84db-967229ae3abc",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": "Tap(duration=0.1)",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Blue Chip",
+                    "type": "Button",
+                    "id": "b7e43beb-d07a-4dc6-9eb0-9729839ec7ac",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Yellow Chip",
+                    "type": "Button",
+                    "id": "1007481e-7056-4b89-9a4f-d168a7f0d5d9",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
                     "initialStateCheck": false
                 }
             ],
@@ -39,12 +57,34 @@
                 },
                 {
                     "name": "",
-                    "id": "91f024da-6dfc-4d5a-8663-980183b91a63",
-                    "path": "<Mouse>/leftButton",
+                    "id": "06e0d4a9-6d33-4fb3-bcf7-6965c6d697a8",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "StartDialogue",
+                    "action": "Red Chip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "55141ac9-dec3-4c68-8eb3-eba760f860d6",
+                    "path": "<Keyboard>/leftArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Blue Chip",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "753d92c9-4592-414e-a622-baa3cd83fbe9",
+                    "path": "<Keyboard>/rightArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Yellow Chip",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
