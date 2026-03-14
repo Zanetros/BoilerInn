@@ -1474,24 +1474,24 @@ MonoBehaviour:
     - rid: 2385519414522413142
       type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+        m_Value: {fileID: -829459765251179596, guid: a9c2999edff844a42a2f04c638749985, type: 3}
     - rid: 2385519414522413143
       type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+        m_Value: {fileID: -2992321353032846406, guid: 71ad00a9719d06f48bf0ef5080ac7a37, type: 3}
     - rid: 2385519414522413144
       type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+        m_Value: {fileID: 1190680614074636787, guid: d8a882ca372669c47949e56141b38313, type: 3}
     - rid: 2385519414522413145
       type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+        m_Value: {fileID: 1190680614074636787, guid: d8a882ca372669c47949e56141b38313, type: 3}
     - rid: 2385519414522413146
       type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+        m_Value: {fileID: 1190680614074636787, guid: d8a882ca372669c47949e56141b38313, type: 3}
     - rid: 2385519414522413147
       type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 7241303465257333715, guid: 4c095b9401cd1b644bda317b285aeab2, type: 3}
+        m_Value: {fileID: -309553294659189597, guid: fb69d146aaa9e9540af0cd6c0520eb83, type: 3}

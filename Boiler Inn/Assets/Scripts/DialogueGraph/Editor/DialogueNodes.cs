@@ -56,6 +56,12 @@ public class ChoiceNode : Node
         }
     }
 
+[Serializable]
+public class MiniGameNode : Node
+{
+    
+}
+
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
         context.AddOption<int>(optionID).WithDefaultValue(2).Delayed();
