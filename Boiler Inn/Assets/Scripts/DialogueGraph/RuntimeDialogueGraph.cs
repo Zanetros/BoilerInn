@@ -17,6 +17,7 @@ public class RunTimeDialogueNode
     public List<ChoiceData> Choices = new List<ChoiceData>();
     public Sprite Sprite;
     public string NextNodeID;
+    public string EventID;
 }
 
 [Serializable]

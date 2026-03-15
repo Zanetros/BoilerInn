@@ -35,18 +35,35 @@ public class DialogueNode : Node
 }
 
 [Serializable]
-public class ChoiceNode : Node
+public class EventNode : Node
 {
-    const string optionID = "portCount";
-    
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
         context.AddInputPort("in").Build();
+        context.AddOutputPort("out").Build();
+        
+        context.AddInputPort<string>("EventID").Build(); 
         
         context.AddInputPort<string>("Speaker").Build();
         context.AddInputPort<string>("Dialogue").Build();
-        context.AddInputPort<Sprite>("Sprite").WithDisplayName("Character Sprite").WithConnectorUI(PortConnectorUI.Arrowhead).Build();
-        
+        context.AddInputPort<Sprite>("Sprite").Build();
+    }
+}
+
+[Serializable]
+public class ChoiceNode : Node
+{
+    const string optionID = "portCount";
+
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+
+        context.AddInputPort<string>("Speaker").Build();
+        context.AddInputPort<string>("Dialogue").Build();
+        context.AddInputPort<Sprite>("Sprite").WithDisplayName("Character Sprite")
+            .WithConnectorUI(PortConnectorUI.Arrowhead).Build();
+
         var option = GetNodeOptionByName(optionID);
         option.TryGetValue(out int portCount);
         for (int i = 0; i < portCount; i++)
@@ -55,6 +72,8 @@ public class ChoiceNode : Node
             context.AddOutputPort($"Choice {i}").Build();
         }
     }
+
+
 
 [Serializable]
 public class MiniGameNode : Node

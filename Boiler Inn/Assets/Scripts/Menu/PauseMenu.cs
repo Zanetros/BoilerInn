@@ -68,7 +68,7 @@ public class PauseMenu : MonoBehaviour
         pauseMenuPanel.SetActive(true);
     }
 
-    public void LoadMainMenu(string sceneName)
+    public void LoadMainMenu(int sceneName)
     {
         Time.timeScale = 1f;
         SceneManager.LoadScene(sceneName);

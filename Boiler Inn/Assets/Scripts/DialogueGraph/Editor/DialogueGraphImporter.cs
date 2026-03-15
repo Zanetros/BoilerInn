@@ -42,6 +42,12 @@ public class DialogueGraphImporter : ScriptedImporter
             {
                 ProcessChoiceNode(choiceNode, runtimeNode, nodeIDMap);
             }
+            // Verifica se o nó atual é do tipo EventNode
+            else if (iNode is EventNode eventNode)
+            {
+                // Chama o novo método para processar os dados do evento
+                ProcessEventNode(eventNode, runtimeNode, nodeIDMap);
+            }
             
             runtimeGraph.AllNodes.Add(runtimeNode);
         }
@@ -59,6 +65,27 @@ public class DialogueGraphImporter : ScriptedImporter
         var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
         if (nextNodePort != null)
         {
+            runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
+        }
+    }
+
+    // Método criado para processar especificamente o EventNode
+    private void ProcessEventNode(EventNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        // Obtém o valor do porto Speaker definido no EventNode
+        runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
+        // Obtém o valor do porto Dialogue definido no EventNode
+        runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
+        // Obtém o valor do porto Sprite definido no EventNode
+        runtimeNode.Sprite = GetPortValue<Sprite>(node.GetInputPortByName("Sprite"));
+        // Obtém o valor do porto EventID, essencial para disparar o minigame
+        runtimeNode.EventID = GetPortValue<string>(node.GetInputPortByName("EventID"));
+        
+        // Localiza o porto de saída chamado "out" para continuar o fluxo
+        var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
+        if (nextNodePort != null)
+        {
+            // Mapeia o ID do próximo nó para salvar no arquivo de runtime
             runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
         }
     }
@@ -87,7 +114,6 @@ public class DialogueGraphImporter : ScriptedImporter
         }
     }
     
-
     private T GetPortValue<T>(IPort port)
     {
         if (port == null) return default;
@@ -103,7 +129,5 @@ public class DialogueGraphImporter : ScriptedImporter
         
         port.TryGetValue(out T fallbackValue);
         return fallbackValue;
-        
-        
     }
 }

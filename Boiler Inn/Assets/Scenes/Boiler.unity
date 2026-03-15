@@ -1737,14 +1737,14 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1940844410}
         m_TargetAssemblyTypeName: PauseMenu, Assembly-CSharp
-        m_MethodName: MainMenu
+        m_MethodName: LoadMainMenu
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: 0
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &782753308
@@ -3015,6 +3015,8 @@ MonoBehaviour:
   hitSound: {fileID: 8300000, guid: 78be8de0e3217a444bd913388d322ac4, type: 3}
   missSound: {fileID: 8300000, guid: e0b36039a623b09469bf2d8a58c61277, type: 3}
   totalNotes: 10
+  mgManager: {fileID: 1940844412}
+  spawner: {fileID: 1851500483}
 --- !u!1 &1554750662
 GameObject:
   m_ObjectHideFlags: 0
@@ -3315,14 +3317,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1791153343}
-  - component: {fileID: 1791153344}
   m_Layer: 5
   m_Name: Dialogue
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1791153343
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3344,26 +3345,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1791153344
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1791153342}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 75c249055f2e5934eb2a44c87393b59c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
-  runtimeGraph: {fileID: 3965311268370046156, guid: 1dc8f318c394fd242880a314c98fcb73, type: 3}
-  dialoguePanel: {fileID: 1904001411}
-  speakerNameText: {fileID: 1957276337}
-  dialogueText: {fileID: 1211267687}
-  portrait: {fileID: 1505463722}
-  characterSprite: {fileID: 1473311771}
-  choiceButtonPrefab: {fileID: 4384139451073578168, guid: dc5080c9ca5a4a7469b5578e9e4be036, type: 3}
-  choiceButtonContainer: {fileID: 1469052405}
 --- !u!1 &1795325786
 GameObject:
   m_ObjectHideFlags: 0
@@ -3484,7 +3465,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1851500482
 Transform:
   m_ObjectHideFlags: 0
@@ -3687,6 +3668,8 @@ GameObject:
   - component: {fileID: 1940844408}
   - component: {fileID: 1940844410}
   - component: {fileID: 1940844411}
+  - component: {fileID: 1940844412}
+  - component: {fileID: 1940844413}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -3797,6 +3780,59 @@ MonoBehaviour:
   mainMixer: {fileID: 24100000, guid: 3010d55f476e84847a4ebfc28c9a1b86, type: 2}
   musicSlider: {fileID: 379754786}
   sfxSlider: {fileID: 591040747}
+--- !u!114 &1940844412
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940844407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd7ced540f2819d4bb4ab837bcea5d00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MiniGameManager
+  miniGame: {fileID: 1851500481}
+  dialogueUI: {fileID: 1791153342}
+  dialogueManager: {fileID: 1940844413}
+--- !u!114 &1940844413
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940844407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75c249055f2e5934eb2a44c87393b59c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
+  runtimeGraph: {fileID: 3965311268370046156, guid: 1dc8f318c394fd242880a314c98fcb73, type: 3}
+  dialoguePanel: {fileID: 1904001411}
+  speakerNameText: {fileID: 1957276337}
+  dialogueText: {fileID: 1211267687}
+  portrait: {fileID: 1505463722}
+  characterSprite: {fileID: 1473311771}
+  choiceButtonPrefab: {fileID: 4384139451073578168, guid: dc5080c9ca5a4a7469b5578e9e4be036, type: 3}
+  choiceButtonContainer: {fileID: 1469052405}
+  dialogueEvents:
+  - eventID: 1
+    onTrigger:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1940844412}
+          m_TargetAssemblyTypeName: MiniGameManager, Assembly-CSharp
+          m_MethodName: StartMiniGame
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  typingSpeed: 0.0108
 --- !u!1 &1957276335
 GameObject:
   m_ObjectHideFlags: 0
