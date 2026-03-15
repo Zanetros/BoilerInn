@@ -13,6 +13,10 @@ public class HitBar : MonoBehaviour
 
     public static int hits = 0;
     public static int score = 0;
+    
+    [Header("Sounds")]
+    public AudioClip hitSound;
+    public AudioClip missSound;
 
     public int totalNotes = 10;
 
@@ -65,7 +69,7 @@ public class HitBar : MonoBehaviour
     {
         if (notesInside.Count == 0)
         {
-            Debug.Log("MISS");
+            SoundManager.instance.PlaySFX(missSound); // Som de erro
             return;
         }
 
@@ -74,12 +78,13 @@ public class HitBar : MonoBehaviour
         if (note.color == inputColor)
         {
             hits++;
+            SoundManager.instance.PlaySFX(hitSound); // Som de acerto!
             Destroy(note.gameObject);
             notesInside.Remove(note);
         }
         else
         {
-            Debug.Log("Wrong color");
+            SoundManager.instance.PlaySFX(missSound); // Som de cor errada
         }
     }
     

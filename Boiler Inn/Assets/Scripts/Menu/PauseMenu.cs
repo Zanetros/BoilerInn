@@ -1,40 +1,76 @@
-using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
 
 public class PauseMenu : MonoBehaviour
 {
-    [SerializeField] GameObject pauseMenu;
-    public bool isGamePaused;
+    [Header("Input Action")]
+    public InputActionReference pauseAction; // Arraste sua ação de "ESC" ou "Start" aqui
 
-    public void OpenMenu()
+    [Header("Painéis de UI")]
+    [SerializeField] private GameObject pauseMenuPanel;
+    [SerializeField] private GameObject optionsMenuPanel;
+
+    public bool IsGamePaused { get; private set; }
+
+    private void OnEnable()
     {
-        if (!pauseMenu.activeSelf)
-        {
-            PauseGame();
-        }
-        else
-        {
+        // Subscreve ao evento de clique da tecla de pausa
+        pauseAction.action.started += OnPauseTriggered;
+    }
+
+    private void OnDisable()
+    {
+        // Desinscreve para evitar erros de memória
+        pauseAction.action.started -= OnPauseTriggered;
+    }
+
+    // Função chamada pelo Input System
+    private void OnPauseTriggered(InputAction.CallbackContext ctx)
+    {
+        TogglePause();
+    }
+
+    public void TogglePause()
+    {
+        if (IsGamePaused)
             ResumeGame();
-        }
+        else
+            PauseGame();
     }
 
     public void PauseGame()
     {
-        pauseMenu.SetActive(true);
-        Time.timeScale = 0;
-        isGamePaused = true;
+        pauseMenuPanel.SetActive(true);
+        optionsMenuPanel.SetActive(false);
+        Time.timeScale = 0f;
+        IsGamePaused = true;
     }
     
     public void ResumeGame()
     {
-        pauseMenu.SetActive(false);
-        Time.timeScale = 1;
-        isGamePaused = false;
+        pauseMenuPanel.SetActive(false);
+        optionsMenuPanel.SetActive(false);
+        Time.timeScale = 1f;
+        IsGamePaused = false;
     }
 
-    public void MainMenu(int sceneIndex)
+    // Transição entre Menu de Pausa e Opções
+    public void OpenOptions()
     {
-        SceneManager.LoadScene(sceneIndex);
+        pauseMenuPanel.SetActive(false);
+        optionsMenuPanel.SetActive(true);
+    }
+
+    public void CloseOptions()
+    {
+        optionsMenuPanel.SetActive(false);
+        pauseMenuPanel.SetActive(true);
+    }
+
+    public void LoadMainMenu(string sceneName)
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(sceneName);
     }
 }
