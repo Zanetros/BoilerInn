@@ -25,13 +25,12 @@ public class DialogueManager : MonoBehaviour
     [System.Serializable]
     public struct DialogueEvent
     {
-        public string eventID;       // ID que você digita no nó do Grafo
-        public UnityEvent onTrigger; // Função que será chamada na Unity
+        public string eventID;       
+        public UnityEvent onTrigger; 
     }
 
     [Header("Event Settings")]
     public List<DialogueEvent> dialogueEvents = new List<DialogueEvent>();
-    // --------------------------------
     
     [Header("Configurações de Texto")]
     [SerializeField] private float typingSpeed = 0.05f;
@@ -59,8 +58,8 @@ public class DialogueManager : MonoBehaviour
 
     public void Update()
     {
-        // Verifica clique para avançar apenas se não houver escolhas (botões) na tela
-        if (Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
+        // Só permite avançar se o painel estiver ativo (evita avançar diálogos invisíveis durante o minigame)
+        if (dialoguePanel.activeSelf && Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
         {
             if (!string.IsNullOrEmpty(currentNode.NextNodeID))
             {
@@ -83,21 +82,24 @@ public class DialogueManager : MonoBehaviour
     
         currentNode = nodeLookup[nodeID];
 
-        // --- NOVO: DISPARO DE EVENTO ---
+        // --- CORREÇÃO AQUI: DISPARO DE EVENTO ---
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
+            // 1. Desliga o painel de diálogo imediatamente
+            dialoguePanel.SetActive(false);
+
+            // 2. Para o texto que estava sendo digitado
+            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+
+            // 3. Executa o evento (Minigame)
             ExecuteDialogueEvent(currentNode.EventID);
+
+            // 4. CRÍTICO: Para a execução deste método aqui! 
+            // Isso impede que o painel seja ligado novamente pelas linhas abaixo.
+            return; 
         }
 
-        // Lógica para "Nó de Evento Puro": 
-        // Se o nó não tiver texto, ele executa o evento e pula para o próximo automaticamente
-        if (string.IsNullOrEmpty(currentNode.DialogueText) && currentNode.Choices.Count == 0 && !string.IsNullOrEmpty(currentNode.NextNodeID))
-        {
-            ShowNode(currentNode.NextNodeID);
-            return;
-        }
-        // -------------------------------
-    
+        // Se chegou aqui, não é um evento, então mostramos o diálogo normalmente
         dialoguePanel.SetActive(true);
         speakerNameText.SetText(currentNode.SpeakerName);
     
@@ -107,7 +109,6 @@ public class DialogueManager : MonoBehaviour
         }
         typingCoroutine = StartCoroutine(TypeText(currentNode.DialogueText));
 
-        // Atualiza imagens (se houver sprite configurado)
         if (currentNode.Sprite != null)
         {
             portrait.sprite = currentNode.Sprite;
@@ -115,41 +116,34 @@ public class DialogueManager : MonoBehaviour
             characterSprite.SetNativeSize();
         }
         
-        // Limpa botões de escolha anteriores
+        RefreshChoices();
+    }
+
+    // Método auxiliar para limpar e criar botões
+    private void RefreshChoices()
+    {
         foreach (Transform child in choiceButtonContainer)
         {
             Destroy(child.gameObject);
         }
 
-        // Cria novos botões de escolha
         if (currentNode.Choices.Count > 0)
         {
             foreach (var choice in currentNode.Choices)
             {
                 Button button = Instantiate(choiceButtonPrefab, choiceButtonContainer);
                 TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
-                
-                if (buttonText != null)
-                {
-                    buttonText.text = choice.ChoiceText;
-                }
+                if (buttonText != null) buttonText.text = choice.ChoiceText;
 
                 button.onClick.AddListener(() =>
                 {
-                    if (!string.IsNullOrEmpty(choice.DestinationNodeID))
-                    {
-                        ShowNode(choice.DestinationNodeID);
-                    }
-                    else
-                    {
-                        EndDialogue();
-                    }
+                    if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
+                    else EndDialogue();
                 });
             }
         }
     }
-
-    // --- NOVO: MÉTODO PARA EXECUTAR O EVENTO ---
+    
     private void ExecuteDialogueEvent(string id)
     {
         foreach (var ev in dialogueEvents)
@@ -160,23 +154,21 @@ public class DialogueManager : MonoBehaviour
                 return;
             }
         }
-        Debug.LogWarning($"Evento '{id}' chamado pelo nó, mas não configurado no DialogueManager.");
+        Debug.LogWarning($"Evento '{id}' não configurado.");
     }
 
     private void EndDialogue()
     {
         dialoguePanel.SetActive(false);
         currentNode = null;
-
-        foreach (Transform child in choiceButtonContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
     }
     
     public void ResumeDialogueAfterEvent()
     {
-        // Verifica se o nó que disparou o evento tem um próximo nó conectado
+        // Ao voltar do minigame, ligamos o painel novamente
+        dialoguePanel.SetActive(true);
+
         if (currentNode != null && !string.IsNullOrEmpty(currentNode.NextNodeID))
         {
             ShowNode(currentNode.NextNodeID);
@@ -190,13 +182,11 @@ public class DialogueManager : MonoBehaviour
     private IEnumerator TypeText(string text)
     {
         dialogueText.SetText(""); 
-    
         foreach (char letter in text.ToCharArray())
         {
             dialogueText.text += letter; 
             yield return new WaitForSeconds(typingSpeed); 
         }
-    
         typingCoroutine = null;
     }
 }

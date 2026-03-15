@@ -68,24 +68,14 @@ public class DialogueGraphImporter : ScriptedImporter
             runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
         }
     }
-
-    // Método criado para processar especificamente o EventNode
+    
     private void ProcessEventNode(EventNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
     {
-        // Obtém o valor do porto Speaker definido no EventNode
-        runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
-        // Obtém o valor do porto Dialogue definido no EventNode
-        runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
-        // Obtém o valor do porto Sprite definido no EventNode
-        runtimeNode.Sprite = GetPortValue<Sprite>(node.GetInputPortByName("Sprite"));
-        // Obtém o valor do porto EventID, essencial para disparar o minigame
         runtimeNode.EventID = GetPortValue<string>(node.GetInputPortByName("EventID"));
         
-        // Localiza o porto de saída chamado "out" para continuar o fluxo
         var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
         if (nextNodePort != null)
         {
-            // Mapeia o ID do próximo nó para salvar no arquivo de runtime
             runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
         }
     }

@@ -74,7 +74,7 @@ MonoBehaviour:
           serializedVersion: 2
           x: 881
           y: 327
-          width: 2831
+          width: 2773
           height: 637
         m_GraphElementMetaData:
         - m_Guid:
@@ -1399,14 +1399,8 @@ MonoBehaviour:
         m_InputConstantsById:
           m_KeyList:
           - EventID
-          - Speaker
-          - Dialogue
-          - Sprite
           m_ValueList:
           - rid: 2385519472393060432
-          - rid: 2385519472393060433
-          - rid: 2385519472393060434
-          - rid: 2385519472393060435
         m_InputPortInfos:
           expandedPortsById:
             m_KeyList: []
@@ -1426,18 +1420,6 @@ MonoBehaviour:
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
         m_Value: 1
-    - rid: 2385519472393060433
-      type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: seucu
-    - rid: 2385519472393060434
-      type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: ola ola
-    - rid: 2385519472393060435
-      type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
-      data:
-        m_Value: {fileID: -829459765251179596, guid: a9c2999edff844a42a2f04c638749985, type: 3}
     - rid: 2385519472393060436
       type: {class: EventNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
@@ -1547,7 +1529,7 @@ MonoBehaviour:
           serializedVersion: 2
           Hash: 511f1dd72c3204d2bd16610f0b277a8d
         m_Version: 2
-        m_Position: {x: 3391, y: 612.11237}
+        m_Position: {x: 3333.253, y: 616.6864}
         m_Title: 
         m_Tooltip: 
         m_NodePreviewModel:
@@ -1612,7 +1594,7 @@ MonoBehaviour:
     - rid: 2385519472393060442
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: brenda
+        m_Value: eliot
     - rid: 2385519472393060443
       type: {class: 'Constant`1[[UnityEngine.Sprite, UnityEngine.CoreModule]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1620,7 +1602,7 @@ MonoBehaviour:
     - rid: 2385519472393060444
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: tubao
+        m_Value: muito bao
     - rid: 2385519472393060445
       type: {class: DialogueNode, ns: , asm: Assembly-CSharp-Editor}
       data: 

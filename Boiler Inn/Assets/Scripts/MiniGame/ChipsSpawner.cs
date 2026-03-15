@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,10 +13,13 @@ public class ChipsSpawner : MonoBehaviour
     public float spawnInterval = 1f;
 
     [Header("Spawn Limit")]
-    public int maxSpawns = 20; // quantidade máxima de objetos
+    public int maxSpawns = 20; 
 
     private float timer;
     private int currentSpawns = 0;
+
+    // Propriedade para o Manager consultar
+    public bool IsFinished => currentSpawns >= maxSpawns;
 
     void Start()
     {
@@ -27,7 +29,7 @@ public class ChipsSpawner : MonoBehaviour
     void Update()
     {
         if (currentSpawns >= maxSpawns)
-            return; // para de spawnar
+            return; 
 
         timer -= Time.deltaTime;
 
@@ -48,6 +50,6 @@ public class ChipsSpawner : MonoBehaviour
 
         Instantiate(prefab, spawnPoint.position, Quaternion.identity);
 
-        currentSpawns++; // conta o spawn
+        currentSpawns++; 
     }
 }

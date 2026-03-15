@@ -3015,8 +3015,6 @@ MonoBehaviour:
   hitSound: {fileID: 8300000, guid: 78be8de0e3217a444bd913388d322ac4, type: 3}
   missSound: {fileID: 8300000, guid: e0b36039a623b09469bf2d8a58c61277, type: 3}
   totalNotes: 10
-  mgManager: {fileID: 1940844412}
-  spawner: {fileID: 1851500483}
 --- !u!1 &1554750662
 GameObject:
   m_ObjectHideFlags: 0
@@ -3792,9 +3790,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd7ced540f2819d4bb4ab837bcea5d00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGameManager
-  miniGame: {fileID: 1851500481}
+  miniGameUI: {fileID: 1851500481}
   dialogueUI: {fileID: 1791153342}
   dialogueManager: {fileID: 1940844413}
+  spawner: {fileID: 1851500483}
+  hitBar: {fileID: 1515738912}
 --- !u!114 &1940844413
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3808,7 +3808,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
   runtimeGraph: {fileID: 3965311268370046156, guid: 1dc8f318c394fd242880a314c98fcb73, type: 3}
-  dialoguePanel: {fileID: 1904001411}
+  dialoguePanel: {fileID: 1791153342}
   speakerNameText: {fileID: 1957276337}
   dialogueText: {fileID: 1211267687}
   portrait: {fileID: 1505463722}

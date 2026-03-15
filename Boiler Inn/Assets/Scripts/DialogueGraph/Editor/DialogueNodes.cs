@@ -43,10 +43,6 @@ public class EventNode : Node
         context.AddOutputPort("out").Build();
         
         context.AddInputPort<string>("EventID").Build(); 
-        
-        context.AddInputPort<string>("Speaker").Build();
-        context.AddInputPort<string>("Dialogue").Build();
-        context.AddInputPort<Sprite>("Sprite").Build();
     }
 }
 

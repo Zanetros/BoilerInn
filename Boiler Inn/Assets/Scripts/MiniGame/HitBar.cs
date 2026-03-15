@@ -18,10 +18,11 @@ public class HitBar : MonoBehaviour
     public AudioClip hitSound;
     public AudioClip missSound;
 
-    public int totalNotes = 10;
+    public int totalNotes = 20; // Ajuste para o mesmo valor do maxSpawns
 
     private void OnEnable()
     {
+        hits = 0; // Resetar hits ao começar
         redKey.action.started += OnRedPressed;
         blueKey.action.started += OnBluePressed;
         yellowKey.action.started += OnYellowPressed;
@@ -34,42 +35,27 @@ public class HitBar : MonoBehaviour
         yellowKey.action.started -= OnYellowPressed;
     }
 
-    void OnRedPressed(InputAction.CallbackContext ctx)
-    {
-        TryHit("red");
-    }
-
-    void OnBluePressed(InputAction.CallbackContext ctx)
-    {
-        TryHit("blue");
-    }
-
-    void OnYellowPressed(InputAction.CallbackContext ctx)
-    {
-        TryHit("yellow");
-    }
+    void OnRedPressed(InputAction.CallbackContext ctx) => TryHit("red");
+    void OnBluePressed(InputAction.CallbackContext ctx) => TryHit("blue");
+    void OnYellowPressed(InputAction.CallbackContext ctx) => TryHit("yellow");
 
     private void OnTriggerEnter2D(Collider2D other)
     {
         NoteData note = other.GetComponent<NoteData>();
-
-        if (note != null)
-            notesInside.Add(note);
+        if (note != null) notesInside.Add(note);
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
         NoteData note = other.GetComponent<NoteData>();
-
-        if (note != null)
-            notesInside.Remove(note);
+        if (note != null) notesInside.Remove(note);
     }
 
     void TryHit(string inputColor)
     {
         if (notesInside.Count == 0)
         {
-            SoundManager.instance.PlaySFX(missSound); // Som de erro
+            if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
             return;
         }
 
@@ -78,13 +64,13 @@ public class HitBar : MonoBehaviour
         if (note.color == inputColor)
         {
             hits++;
-            SoundManager.instance.PlaySFX(hitSound); // Som de acerto!
+            if (SoundManager.instance) SoundManager.instance.PlaySFX(hitSound);
             Destroy(note.gameObject);
             notesInside.Remove(note);
         }
         else
         {
-            SoundManager.instance.PlaySFX(missSound); // Som de cor errada
+            if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
         }
     }
     
@@ -92,16 +78,11 @@ public class HitBar : MonoBehaviour
     {
         float accuracy = (float)hits / totalNotes;
 
-        if (accuracy >= 1f)
-            score = 10;
-        else if (accuracy >= 0.7f)
-            score = 7;
-        else if (accuracy >= 0.5f)
-            score = 5;
-        else if (accuracy >= 0.2f)
-            score = 2;
-        else
-            score = 0;
+        if (accuracy >= 1f) score = 10;
+        else if (accuracy >= 0.7f) score = 7;
+        else if (accuracy >= 0.5f) score = 5;
+        else if (accuracy >= 0.2f) score = 2;
+        else score = 0;
 
         Debug.Log("Pontuação final: " + score);
     }
