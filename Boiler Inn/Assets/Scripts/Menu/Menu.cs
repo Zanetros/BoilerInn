@@ -7,6 +7,22 @@ public class Menu : MonoBehaviour
   [SerializeReference] private GameObject menuUI;
   [SerializeField] private GameObject optionsUI;
 
+  public AudioClip menuMusic;
+
+  void Start()
+  {
+    if (SoundManager.instance != null)
+    {
+      // Pede ao SoundManager para aplicar os volumes salvos
+      SoundManager.instance.LoadVolume();
+        
+      // Se você quiser que a música do menu comece a tocar:
+      // SoundManager.instance.PlayMusic(musicaDoMenu);
+    }
+    
+    SoundManager.instance.PlayMusic(menuMusic);
+  }
+  
   public void PlayGame(int sceneIndex)
   {
     SceneManager.LoadScene(sceneIndex);
