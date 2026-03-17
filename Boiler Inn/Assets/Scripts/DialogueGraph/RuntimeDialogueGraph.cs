@@ -18,6 +18,9 @@ public class RunTimeDialogueNode
     public Sprite Sprite;
     public string NextNodeID;
     public string EventID;
+    public int cyberCost;
+    public int implantsCost;
+    public int chipsCost;
 }
 
 [Serializable]

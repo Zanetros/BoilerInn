@@ -43,6 +43,10 @@ public class EventNode : Node
         context.AddOutputPort("out").Build();
         
         context.AddInputPort<string>("EventID").Build(); 
+        
+        context.AddInputPort<int>("CyberCost").WithDisplayName("Cybercurrency Cost").Build();
+        context.AddInputPort<int>("ImplantsCost").WithDisplayName("Implants Cost").Build();
+        context.AddInputPort<int>("ChipsCost").WithDisplayName("Chips Cost").Build();
     }
 }
 

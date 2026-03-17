@@ -37,7 +37,7 @@ public class DialogueManager : MonoBehaviour
     private Coroutine typingCoroutine; 
     
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
-    private RunTimeDialogueNode currentNode;
+    public RunTimeDialogueNode currentNode;
 
     private void Start()
     {
@@ -94,8 +94,6 @@ public class DialogueManager : MonoBehaviour
             // 3. Executa o evento (Minigame)
             ExecuteDialogueEvent(currentNode.EventID);
 
-            // 4. CRÍTICO: Para a execução deste método aqui! 
-            // Isso impede que o painel seja ligado novamente pelas linhas abaixo.
             return; 
         }
 
@@ -166,7 +164,6 @@ public class DialogueManager : MonoBehaviour
     
     public void ResumeDialogueAfterEvent()
     {
-        // Ao voltar do minigame, ligamos o painel novamente
         dialoguePanel.SetActive(true);
 
         if (currentNode != null && !string.IsNullOrEmpty(currentNode.NextNodeID))
