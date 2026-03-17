@@ -1,87 +1,107 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class MiniGameManager : MonoBehaviour
 {
+    public static MiniGameManager instance;
+    
+    [Header("Global UI")]
     public GameObject miniGameUI;
     public GameObject dialogueUI;
     public GameObject finalScoreUI;
     public DialogueManager dialogueManager;
 
-    [Header("Scripts do Minigame")]
-    public ChipsSpawner spawner;
-    public HitBar hitBar;
+    // Estrutura que mapeia o ID do evento para o objeto do minigame
+    [Serializable]
+    public struct MinigameEntry
+    {
+        public string eventID;
+        public GameObject minigameContainer; // O objeto pai que contém o minigame específico
+    }
 
+    [Header("Minigames Database")]
+    public List<MinigameEntry> minigamesList = new List<MinigameEntry>();
+
+    private GameObject activeMinigameContainer; // Guarda qual minigame está rodando agora
     private bool isGameActive = false;
 
-    public void StartMiniGame()
+    private void Awake()
+    {
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
+    }
+    
+    // Chamado pelo DialogueManager passando o ID do nó
+    public void TriggerMinigame(string eventID)
     {
         if (dialogueManager == null || dialogueManager.currentNode == null) return;
-
-        // Obtém os dados de custo do nó de evento atual
         RunTimeDialogueNode nodeData = dialogueManager.currentNode;
 
-        // Verifica se o jogador possui a quantidade estipulada no EventNode
         if (CheckRequirements(nodeData.cyberCost, nodeData.implantsCost, nodeData.chipsCost))
         {
-            // Se tiver o suficiente, apenas inicia o jogo sem descontar nada
-            miniGameUI.SetActive(true);
-            dialogueUI.SetActive(false);
-            isGameActive = true;
-            
-            Debug.Log("Requirements met. Starting minigame without deducting currency.");
+            // Busca o minigame correto na lista
+            foreach (var minigame in minigamesList)
+            {
+                if (minigame.eventID == eventID)
+                {
+                    activeMinigameContainer = minigame.minigameContainer;
+                    break;
+                }
+            }
+
+            // Se achou o minigame, liga tudo
+            if (activeMinigameContainer != null)
+            {
+                miniGameUI.SetActive(true);
+                activeMinigameContainer.SetActive(true); // Liga APENAS o minigame solicitado
+                dialogueUI.SetActive(false);
+                isGameActive = true;
+                
+                Debug.Log($"Requirements met. Starting minigame: {eventID}");
+            }
+            else
+            {
+                Debug.LogWarning($"Minigame with EventID '{eventID}' not found in MiniGameManager list!");
+                dialogueManager.ResumeDialogueAfterEvent();
+            }
         }
         else
         {
-            // Caso não tenha o suficiente, o minigame não inicia
             Debug.LogWarning("Insufficient resources to start the minigame.");
-            
-            // Opcional: Você pode chamar o ResumeDialogue aqui para não travar o jogo
-            // dialogueManager.ResumeDialogueAfterEvent();
+            dialogueManager.ResumeDialogueAfterEvent(); 
         }
     }
 
-    // Função interna para validar os saldos no CurrencyManager
     private bool CheckRequirements(int reqCyber, int reqImplants, int reqChips)
     {
         CurrencyManager wallet = CurrencyManager.instance;
         if (wallet == null) return false;
 
-        // Compara o saldo atual com o valor exigido pelo nó
-        bool hasCyber = wallet.cybercurrency >= reqCyber;
-        bool hasImplants = wallet.implants >= reqImplants;
-        bool hasChips = wallet.chips >= reqChips;
-
-        // Retorna verdadeiro apenas se atender a todos os requisitos simultaneamente
-        return hasCyber && hasImplants && hasChips;
+        return wallet.cybercurrency >= reqCyber && 
+               wallet.implants >= reqImplants && 
+               wallet.chips >= reqChips;
     }
 
-    void Update()
-    {
-        if (!isGameActive) return;
-
-        // Se o spawner parou E não há mais nenhum objeto NoteData voando na cena
-        if (spawner.IsFinished && Object.FindFirstObjectByType<NoteData>() == null)
-        {
-            FinalScore();
-        }
-    }
-
+    // Chamado pelo script controlador de cada minigame individual quando eles terminam
     public void FinalScore()
     {
+        if (!isGameActive) return;
         finalScoreUI.SetActive(true);
+        // Desligamos o minigame atual para não continuar rodando atrás do painel de score
+        if (activeMinigameContainer != null) activeMinigameContainer.SetActive(false); 
     }
 
+    // Geralmente chamado por um botão na tela de "FinalScoreUI"
     public void FinishMiniGame()
     {
         isGameActive = false;
         
-        hitBar.CalculateScore();
-
         miniGameUI.SetActive(false);
         finalScoreUI.SetActive(false);
+        activeMinigameContainer = null;
         dialogueUI.SetActive(true);
 
-        // Avisa o DialogueManager para prosseguir
         if (dialogueManager != null)
         {
             dialogueManager.ResumeDialogueAfterEvent();

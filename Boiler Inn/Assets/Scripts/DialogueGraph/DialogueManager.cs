@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System.Collections;
-using UnityEngine.Events;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -22,17 +21,9 @@ public class DialogueManager : MonoBehaviour
     public Button choiceButtonPrefab;
     public Transform choiceButtonContainer;
     
-    [System.Serializable]
-    public struct DialogueEvent
-    {
-        public string eventID;       
-        public UnityEvent onTrigger; 
-    }
-
-    [Header("Event Settings")]
-    public List<DialogueEvent> dialogueEvents = new List<DialogueEvent>();
+    // A lista de eventos foi removida daqui!
     
-    [Header("Configurações de Texto")]
+    [Header("Text Settings")]
     [SerializeField] private float typingSpeed = 0.05f;
     private Coroutine typingCoroutine; 
     
@@ -46,29 +37,17 @@ public class DialogueManager : MonoBehaviour
             nodeLookup[node.NodeID] = node;
         }
 
-        if (!string.IsNullOrEmpty(runtimeGraph.EntryNodeID))
-        {
-            ShowNode(runtimeGraph.EntryNodeID);
-        }
-        else
-        {
-            EndDialogue();
-        }
+        if (!string.IsNullOrEmpty(runtimeGraph.EntryNodeID)) ShowNode(runtimeGraph.EntryNodeID);
+        else EndDialogue();
     }
 
     public void Update()
     {
-        // Só permite avançar se o painel estiver ativo (evita avançar diálogos invisíveis durante o minigame)
+        // Avança o diálogo se não houver escolhas
         if (dialoguePanel.activeSelf && Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
         {
-            if (!string.IsNullOrEmpty(currentNode.NextNodeID))
-            {
-                ShowNode(currentNode.NextNodeID);
-            }
-            else
-            {
-                EndDialogue();
-            }
+            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
+            else EndDialogue();
         }
     }
 
@@ -82,29 +61,29 @@ public class DialogueManager : MonoBehaviour
     
         currentNode = nodeLookup[nodeID];
 
-        // --- CORREÇÃO AQUI: DISPARO DE EVENTO ---
+        // --- DISPARO DE EVENTO PARA O MINIGAME MANAGER ---
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
-            // 1. Desliga o painel de diálogo imediatamente
             dialoguePanel.SetActive(false);
-
-            // 2. Para o texto que estava sendo digitado
             if (typingCoroutine != null) StopCoroutine(typingCoroutine);
 
-            // 3. Executa o evento (Minigame)
-            ExecuteDialogueEvent(currentNode.EventID);
-
+            // Agora chamamos o MiniGameManager passando o ID do evento diretamente
+            if (MiniGameManager.instance != null)
+            {
+                MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
+            }
+            else
+            {
+                Debug.LogWarning("MiniGameManager instance not found!");
+            }
             return; 
         }
 
-        // Se chegou aqui, não é um evento, então mostramos o diálogo normalmente
+        // --- EXIBIÇÃO DE DIÁLOGO NORMAL ---
         dialoguePanel.SetActive(true);
         speakerNameText.SetText(currentNode.SpeakerName);
     
-        if (typingCoroutine != null)
-        {
-            StopCoroutine(typingCoroutine);
-        }
+        if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(TypeText(currentNode.DialogueText));
 
         if (currentNode.Sprite != null)
@@ -117,13 +96,9 @@ public class DialogueManager : MonoBehaviour
         RefreshChoices();
     }
 
-    // Método auxiliar para limpar e criar botões
     private void RefreshChoices()
     {
-        foreach (Transform child in choiceButtonContainer)
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (Transform child in choiceButtonContainer) Destroy(child.gameObject);
 
         if (currentNode.Choices.Count > 0)
         {
@@ -133,12 +108,11 @@ public class DialogueManager : MonoBehaviour
                 TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
                 if (buttonText != null) buttonText.text = choice.ChoiceText;
 
-                // --- LÓGICA DE GERENCIAMENTO DE HOTEL ---
+                // --- LÓGICA DO HOTEL ---
                 if (currentNode.isHotelNode)
                 {
                     if (choice.ChoiceText == "Accept")
                     {
-                        // Se não houver quartos, desativa o botão e avisa o jogador visualmente
                         if (!HotelManager.instance.HasAvailableRoom())
                         {
                             button.interactable = false;
@@ -146,37 +120,19 @@ public class DialogueManager : MonoBehaviour
                         }
                     }
                 }
-                // ----------------------------------------
 
                 button.onClick.AddListener(() =>
                 {
-                    // Se o jogador clicou em "Accept" e é um HotelNode, fazemos o check-in
                     if (currentNode.isHotelNode && choice.ChoiceText == "Accept")
                     {
                         HotelManager.instance.AddGuest(currentNode.guestID);
                     }
 
-                    // Avança o diálogo normalmente
-                    if (!string.IsNullOrEmpty(choice.DestinationNodeID)) 
-                        ShowNode(choice.DestinationNodeID);
-                    else 
-                        EndDialogue();
+                    if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
+                    else EndDialogue();
                 });
             }
         }
-    }
-    
-    private void ExecuteDialogueEvent(string id)
-    {
-        foreach (var ev in dialogueEvents)
-        {
-            if (ev.eventID == id)
-            {
-                ev.onTrigger.Invoke();
-                return;
-            }
-        }
-        Debug.LogWarning($"Evento '{id}' não configurado.");
     }
 
     private void EndDialogue()
@@ -189,15 +145,8 @@ public class DialogueManager : MonoBehaviour
     public void ResumeDialogueAfterEvent()
     {
         dialoguePanel.SetActive(true);
-
-        if (currentNode != null && !string.IsNullOrEmpty(currentNode.NextNodeID))
-        {
-            ShowNode(currentNode.NextNodeID);
-        }
-        else
-        {
-            EndDialogue();
-        }
+        if (currentNode != null && !string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
+        else EndDialogue();
     }
     
     private IEnumerator TypeText(string text)
