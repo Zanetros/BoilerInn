@@ -14,13 +14,21 @@ public class RunTimeDialogueNode
     public string NodeID;
     public string SpeakerName;
     public string DialogueText;
+    
     public List<ChoiceData> Choices = new List<ChoiceData>();
+    
     public Sprite Sprite;
+    
     public string NextNodeID;
+    
     public string EventID;
+    
     public int cyberCost;
     public int implantsCost;
     public int chipsCost;
+    
+    public bool isHotelNode;
+    public string guestID;
 }
 
 [Serializable]

@@ -48,6 +48,10 @@ public class DialogueGraphImporter : ScriptedImporter
                 // Chama o novo método para processar os dados do evento
                 ProcessEventNode(eventNode, runtimeNode, nodeIDMap);
             }
+            else if (iNode is HotelNode hotelNode)
+            {
+                ProcessHotelNode(hotelNode, runtimeNode, nodeIDMap);
+            }
             
             runtimeGraph.AllNodes.Add(runtimeNode);
         }
@@ -104,6 +108,38 @@ public class DialogueGraphImporter : ScriptedImporter
             };
         
             runtimeNode.Choices.Add(choiceData);
+        }
+    }
+    
+    private void ProcessHotelNode(HotelNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        // Define que este nó tem comportamento especial de hotel
+        runtimeNode.isHotelNode = true;
+    
+        // Lê os dados do hóspede e do diálogo
+        runtimeNode.guestID = GetPortValue<string>(node.GetInputPortByName("GuestID"));
+        runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
+        runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
+        runtimeNode.Sprite = GetPortValue<Sprite>(node.GetInputPortByName("Sprite"));
+
+        // Mapeia a porta de "Aceitar"
+        var acceptPort = node.GetOutputPortByName("Choice Accept")?.firstConnectedPort;
+        if (acceptPort != null)
+        {
+            runtimeNode.Choices.Add(new ChoiceData { 
+                ChoiceText = "Accept", 
+                DestinationNodeID = nodeIDMap[acceptPort.GetNode()] 
+            });
+        }
+
+        // Mapeia a porta de "Recusar"
+        var refusePort = node.GetOutputPortByName("Choice Refuse")?.firstConnectedPort;
+        if (refusePort != null)
+        {
+            runtimeNode.Choices.Add(new ChoiceData { 
+                ChoiceText = "Refuse", 
+                DestinationNodeID = nodeIDMap[refusePort.GetNode()] 
+            });
         }
     }
     

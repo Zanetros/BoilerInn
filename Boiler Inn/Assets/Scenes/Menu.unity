@@ -555,9 +555,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b83fb66af8e89b468ef69fb70f95e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CurrencyManager
-  cybercurrency: 10
-  implants: 10
-  chips: 10
+  cybercurrency: 9
+  implants: 9
+  chips: 9
 --- !u!4 &124110521
 Transform:
   m_ObjectHideFlags: 0

@@ -133,10 +133,34 @@ public class DialogueManager : MonoBehaviour
                 TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
                 if (buttonText != null) buttonText.text = choice.ChoiceText;
 
+                // --- LÓGICA DE GERENCIAMENTO DE HOTEL ---
+                if (currentNode.isHotelNode)
+                {
+                    if (choice.ChoiceText == "Accept")
+                    {
+                        // Se não houver quartos, desativa o botão e avisa o jogador visualmente
+                        if (!HotelManager.instance.HasAvailableRoom())
+                        {
+                            button.interactable = false;
+                            if (buttonText != null) buttonText.text += " (Hotel Full)";
+                        }
+                    }
+                }
+                // ----------------------------------------
+
                 button.onClick.AddListener(() =>
                 {
-                    if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
-                    else EndDialogue();
+                    // Se o jogador clicou em "Accept" e é um HotelNode, fazemos o check-in
+                    if (currentNode.isHotelNode && choice.ChoiceText == "Accept")
+                    {
+                        HotelManager.instance.AddGuest(currentNode.guestID);
+                    }
+
+                    // Avança o diálogo normalmente
+                    if (!string.IsNullOrEmpty(choice.DestinationNodeID)) 
+                        ShowNode(choice.DestinationNodeID);
+                    else 
+                        EndDialogue();
                 });
             }
         }

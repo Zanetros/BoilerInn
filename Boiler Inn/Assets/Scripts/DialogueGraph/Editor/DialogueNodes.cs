@@ -72,17 +72,30 @@ public class ChoiceNode : Node
             context.AddOutputPort($"Choice {i}").Build();
         }
     }
-
-
-
-[Serializable]
-public class MiniGameNode : Node
-{
-    
-}
-
     protected override void OnDefineOptions(IOptionDefinitionContext context)
     {
         context.AddOption<int>(optionID).WithDefaultValue(2).Delayed();
+    }
+}
+
+[Serializable]
+public class HotelNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        // Portas de entrada do fluxo
+        context.AddInputPort("in").Build();
+        
+        // Identificação do hóspede
+        context.AddInputPort<string>("GuestID").WithDisplayName("Guest ID").Build();
+        
+        // Textos e imagens do diálogo de recepção
+        context.AddInputPort<string>("Speaker").Build();
+        context.AddInputPort<string>("Dialogue").Build();
+        context.AddInputPort<Sprite>("Sprite").Build();
+
+        // Portas de saída (Escolhas do jogador)
+        context.AddOutputPort("Choice Accept").WithDisplayName("Accept Guest").Build();
+        context.AddOutputPort("Choice Refuse").WithDisplayName("Refuse Guest").Build();
     }
 }
