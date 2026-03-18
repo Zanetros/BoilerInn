@@ -27,13 +27,12 @@ public class RhythmMinigameController : MonoBehaviour
                 {
                     if (MiniGameManager.instance != null)
                     {
-                        // 1. Manda os dados para o Manager calcular a pontuação
                         if (hitBar != null)
                         {
-                            MiniGameManager.instance.CalculateScore(HitBar.hits, hitBar.totalNotes);
+                            // ATUALIZADO: Agora enviamos hits, misses e totalNotes
+                            MiniGameManager.instance.CalculateScore(hitBar.hits, hitBar.misses, hitBar.totalNotes);
                         }
 
-                        // 2. Chama a UI de score final
                         MiniGameManager.instance.FinalScore(); 
                     }
 

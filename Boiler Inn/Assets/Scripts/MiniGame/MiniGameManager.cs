@@ -26,8 +26,8 @@ public class MiniGameManager : MonoBehaviour
     private GameObject activeMinigameContainer; 
     private bool isGameActive = false;
     
-    // NOVA VARIÁVEL: Guarda a pontuação calculada
     public int currentScore = 0; 
+    public int currentMisses = 0; // NOVA VARIÁVEL: Guarda os erros para a cobrança final
 
     private void Awake()
     {
@@ -48,6 +48,7 @@ public class MiniGameManager : MonoBehaviour
         if (dialogueManager == null || dialogueManager.currentNode == null) return;
         RunTimeDialogueNode nodeData = dialogueManager.currentNode;
 
+        // Verifica se tem o dinheiro base (sem multa) para poder entrar
         if (CheckRequirements(nodeData.cyberCost, nodeData.implantsCost, nodeData.chipsCost))
         {
             if (minigameDictionary.TryGetValue(eventID, out activeMinigameContainer))
@@ -55,7 +56,8 @@ public class MiniGameManager : MonoBehaviour
                 activeMinigameContainer.SetActive(true); 
                 dialogueUI.SetActive(false);
                 isGameActive = true;
-                currentScore = 0; // Reseta a pontuação ao iniciar um novo jogo
+                currentScore = 0; 
+                currentMisses = 0; // Reseta erros ao iniciar
                 
                 Debug.Log($"Requirements met. Starting minigame: {eventID}");
             }
@@ -81,9 +83,11 @@ public class MiniGameManager : MonoBehaviour
                CurrencyManager.instance.chips >= reqChips;
     }
 
-    // NOVO MÉTODO: Calcula a pontuação baseada em acertos e total
-    public void CalculateScore(int hits, int totalGoals)
+    // ATUALIZADO: Agora recebe também a quantidade de erros (misses)
+    public void CalculateScore(int hits, int misses, int totalGoals)
     {
+        currentMisses = misses; // Guarda os erros para usar no pagamento
+
         float accuracy = (float)hits / totalGoals;
 
         if (accuracy >= 1f) currentScore = 10;
@@ -92,7 +96,7 @@ public class MiniGameManager : MonoBehaviour
         else if (accuracy >= 0.2f) currentScore = 2;
         else currentScore = 0;
 
-        Debug.Log("Final Score Calculated in Manager: " + currentScore);
+        Debug.Log($"Score: {currentScore} | Hits: {hits} | Misses: {misses}");
     }
 
     public void FinalScore()
@@ -106,6 +110,9 @@ public class MiniGameManager : MonoBehaviour
         isGameActive = false;
         finalScoreUI.SetActive(false);
 
+        // Processa o pagamento e possíveis multas antes de fechar o jogo
+        ProcessPayment();
+
         if (activeMinigameContainer != null)
         {
             activeMinigameContainer.SetActive(false);
@@ -115,5 +122,57 @@ public class MiniGameManager : MonoBehaviour
         dialogueUI.SetActive(true);
 
         if (dialogueManager != null) dialogueManager.ResumeDialogueAfterEvent();
+    }
+
+    // NOVO MÉTODO: Faz a cobrança real baseado no desempenho
+   private void ProcessPayment()
+    {
+        if (dialogueManager == null || dialogueManager.currentNode == null) return;
+        
+        RunTimeDialogueNode nodeData = dialogueManager.currentNode;
+        CurrencyManager wallet = CurrencyManager.instance;
+        
+        if (wallet != null)
+        {
+            // Pega os custos base
+            int finalCyber = nodeData.cyberCost;
+            int finalImplants = nodeData.implantsCost;
+            int finalChips = nodeData.chipsCost;
+
+            bool isPenalized = currentMisses >= 5;
+
+            // MULTA DE 20%: Garante que a multa seja de no mínimo +1 (se o custo não for zero)
+            if (isPenalized)
+            {
+                if (finalCyber > 0) finalCyber += Mathf.Max(1, Mathf.RoundToInt(finalCyber * 0.2f));
+                if (finalImplants > 0) finalImplants += Mathf.Max(1, Mathf.RoundToInt(finalImplants * 0.2f));
+                if (finalChips > 0) finalChips += Mathf.Max(1, Mathf.RoundToInt(finalChips * 0.2f));
+            }
+
+            // Subtrai do CurrencyManager
+            wallet.cybercurrency -= finalCyber;
+            wallet.implants -= finalImplants;
+            wallet.chips -= finalChips;
+
+            // --- TRAVA DE SEGURANÇA (SALDO NEGATIVO) ---
+            if (wallet.cybercurrency < 0) wallet.cybercurrency = 0;
+            if (wallet.implants < 0) wallet.implants = 0;
+            if (wallet.chips < 0) wallet.chips = 0;
+            // -------------------------------------------
+
+            // Força a UI a atualizar com os valores já corrigidos
+            wallet.AddCybercurrency(0);
+            wallet.AddImplants(0);
+            wallet.AddChips(0);
+
+            if (isPenalized)
+            {
+                Debug.LogWarning($"PENA APLICADA! Erros: {currentMisses}. Custo final (+20% ou min +1): Cyber({finalCyber}) Implants({finalImplants}) Chips({finalChips})");
+            }
+            else
+            {
+                Debug.Log($"Pagamento normal. Custo final: Cyber({finalCyber}) Implants({finalImplants}) Chips({finalChips})");
+            }
+        }
     }
 }

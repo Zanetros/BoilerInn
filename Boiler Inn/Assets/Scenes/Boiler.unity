@@ -2713,9 +2713,11 @@ MonoBehaviour:
   redKey: {fileID: -8395110345229685022, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
   blueKey: {fileID: -7007187406506776362, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
   yellowKey: {fileID: -3398295741246873812, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
-  hitSound: {fileID: 8300000, guid: 78be8de0e3217a444bd913388d322ac4, type: 3}
-  missSound: {fileID: 8300000, guid: e0b36039a623b09469bf2d8a58c61277, type: 3}
+  hits: 0
+  misses: 0
   totalNotes: 10
+  hitSound: {fileID: 8300000, guid: 52c6d97fc5d4724438d90f8ba9597476, type: 3}
+  missSound: {fileID: 8300000, guid: faf8f55b5b1281f40ba247af5f85ca46, type: 3}
 --- !u!61 &1221902654
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -3714,9 +3716,11 @@ MonoBehaviour:
   redKey: {fileID: -8395110345229685022, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
   blueKey: {fileID: -7007187406506776362, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
   yellowKey: {fileID: -3398295741246873812, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
-  hitSound: {fileID: 8300000, guid: 78be8de0e3217a444bd913388d322ac4, type: 3}
-  missSound: {fileID: 8300000, guid: e0b36039a623b09469bf2d8a58c61277, type: 3}
+  hits: 0
+  misses: 0
   totalNotes: 10
+  hitSound: {fileID: 8300000, guid: 52c6d97fc5d4724438d90f8ba9597476, type: 3}
+  missSound: {fileID: 8300000, guid: faf8f55b5b1281f40ba247af5f85ca46, type: 3}
 --- !u!1 &1554750662
 GameObject:
   m_ObjectHideFlags: 0
@@ -5072,6 +5076,8 @@ MonoBehaviour:
     minigameContainer: {fileID: 1851500481}
   - eventID: 2
     minigameContainer: {fileID: 1441839120}
+  currentScore: 0
+  currentMisses: 0
 --- !u!114 &1940844413
 MonoBehaviour:
   m_ObjectHideFlags: 0

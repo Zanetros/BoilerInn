@@ -11,18 +11,18 @@ public class HitBar : MonoBehaviour
 
     private List<NoteData> notesInside = new List<NoteData>();
 
-    public static int hits = 0;
-    // A variável score e a função CalculateScore foram removidas e enviadas para o Manager
+    public int hits = 0; 
+    public int misses = 0; // NOVA VARIÁVEL: Conta os erros de timing/cor
+    public int totalNotes = 20; 
     
     [Header("Sounds")]
     public AudioClip hitSound;
     public AudioClip missSound;
 
-    public int totalNotes = 20; // Ajuste para o mesmo valor do maxSpawns
-
     private void OnEnable()
     {
-        hits = 0; // Resetar hits ao começar
+        hits = 0; 
+        misses = 0; // Reseta os erros ao iniciar
         redKey.action.started += OnRedPressed;
         blueKey.action.started += OnBluePressed;
         yellowKey.action.started += OnYellowPressed;
@@ -41,20 +41,26 @@ public class HitBar : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        NoteData note = other.GetComponent<NoteData>();
-        if (note != null) notesInside.Add(note);
+        if (other.TryGetComponent(out NoteData note))
+        {
+            notesInside.Add(note);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        NoteData note = other.GetComponent<NoteData>();
-        if (note != null) notesInside.Remove(note);
+        if (other.TryGetComponent(out NoteData note))
+        {
+            notesInside.Remove(note);
+        }
     }
 
     void TryHit(string inputColor)
     {
+        // ERRO DE TIMING: Apertou o botão mas não tinha nota na barra
         if (notesInside.Count == 0)
         {
+            misses++; 
             if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
             return;
         }
@@ -63,13 +69,17 @@ public class HitBar : MonoBehaviour
 
         if (note.color == inputColor)
         {
+            // ACERTOU
             hits++;
             if (SoundManager.instance) SoundManager.instance.PlaySFX(hitSound);
-            Destroy(note.gameObject); // Mantido conforme sua solicitação
+            
             notesInside.Remove(note);
+            note.gameObject.SetActive(false); 
         }
         else
         {
+            // ERRO DE COR: Apertou o botão mas a cor da nota era diferente
+            misses++; 
             if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
         }
     }
