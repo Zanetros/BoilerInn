@@ -3053,53 +3053,6 @@ Transform:
   - {fileID: 165709874}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1464538735
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1464538737}
-  - component: {fileID: 1464538736}
-  m_Layer: 0
-  m_Name: CurrencyManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1464538736
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1464538735}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8b83fb66af8e89b468ef69fb70f95e5d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CurrencyManager
-  cybercurrency: 9
-  implants: 9
-  chips: 9
---- !u!4 &1464538737
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1464538735}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 71.38086, y: 48.32777, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1469052404
 GameObject:
   m_ObjectHideFlags: 0
@@ -5111,7 +5064,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd7ced540f2819d4bb4ab837bcea5d00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MiniGameManager
-  miniGameUI: {fileID: 1851500481}
   dialogueUI: {fileID: 1791153342}
   finalScoreUI: {fileID: 1756239948}
   dialogueManager: {fileID: 1940844413}
@@ -5141,19 +5093,6 @@ MonoBehaviour:
   choiceButtonPrefab: {fileID: 4384139451073578168, guid: dc5080c9ca5a4a7469b5578e9e4be036, type: 3}
   choiceButtonContainer: {fileID: 1469052405}
   typingSpeed: 0.0108
-  currentNode:
-    NodeID: 
-    SpeakerName: 
-    DialogueText: 
-    Choices: []
-    Sprite: {fileID: 0}
-    NextNodeID: 
-    EventID: 
-    cyberCost: 0
-    implantsCost: 0
-    chipsCost: 0
-    isHotelNode: 0
-    guestID: 
 --- !u!1 &1957276335
 GameObject:
   m_ObjectHideFlags: 0
@@ -5521,4 +5460,3 @@ SceneRoots:
   - {fileID: 1851500482}
   - {fileID: 1441839123}
   - {fileID: 1728283633}
-  - {fileID: 1464538737}

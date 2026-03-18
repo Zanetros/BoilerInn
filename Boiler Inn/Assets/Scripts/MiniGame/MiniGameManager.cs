@@ -21,18 +21,19 @@ public class MiniGameManager : MonoBehaviour
     [Header("Minigames Database")]
     public List<MinigameEntry> minigamesList = new List<MinigameEntry>();
 
-    // OTIMIZAÇÃO: Dicionário faz a busca do jogo ser instantânea na memória
     private Dictionary<string, GameObject> minigameDictionary = new Dictionary<string, GameObject>();
 
     private GameObject activeMinigameContainer; 
     private bool isGameActive = false;
+    
+    // NOVA VARIÁVEL: Guarda a pontuação calculada
+    public int currentScore = 0; 
 
     private void Awake()
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
 
-        // Preenche o dicionário ao iniciar o jogo para pesquisas super rápidas
         foreach (var entry in minigamesList)
         {
             if (!minigameDictionary.ContainsKey(entry.eventID))
@@ -49,12 +50,12 @@ public class MiniGameManager : MonoBehaviour
 
         if (CheckRequirements(nodeData.cyberCost, nodeData.implantsCost, nodeData.chipsCost))
         {
-            // OTIMIZAÇÃO: Busca instantânea sem loop 'foreach'
             if (minigameDictionary.TryGetValue(eventID, out activeMinigameContainer))
             {
-                activeMinigameContainer.SetActive(true); // Liga APENAS o minigame solicitado
+                activeMinigameContainer.SetActive(true); 
                 dialogueUI.SetActive(false);
                 isGameActive = true;
+                currentScore = 0; // Reseta a pontuação ao iniciar um novo jogo
                 
                 Debug.Log($"Requirements met. Starting minigame: {eventID}");
             }
@@ -80,6 +81,20 @@ public class MiniGameManager : MonoBehaviour
                CurrencyManager.instance.chips >= reqChips;
     }
 
+    // NOVO MÉTODO: Calcula a pontuação baseada em acertos e total
+    public void CalculateScore(int hits, int totalGoals)
+    {
+        float accuracy = (float)hits / totalGoals;
+
+        if (accuracy >= 1f) currentScore = 10;
+        else if (accuracy >= 0.7f) currentScore = 7;
+        else if (accuracy >= 0.5f) currentScore = 5;
+        else if (accuracy >= 0.2f) currentScore = 2;
+        else currentScore = 0;
+
+        Debug.Log("Final Score Calculated in Manager: " + currentScore);
+    }
+
     public void FinalScore()
     {
         if (!isGameActive) return;
@@ -89,10 +104,8 @@ public class MiniGameManager : MonoBehaviour
     public void FinishMiniGame()
     {
         isGameActive = false;
-        
         finalScoreUI.SetActive(false);
 
-        // CORREÇÃO: Desliga o minigame atual específico antes de limpar a referência
         if (activeMinigameContainer != null)
         {
             activeMinigameContainer.SetActive(false);

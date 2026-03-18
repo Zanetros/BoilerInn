@@ -12,7 +12,7 @@ public class HitBar : MonoBehaviour
     private List<NoteData> notesInside = new List<NoteData>();
 
     public static int hits = 0;
-    public static int score = 0;
+    // A variável score e a função CalculateScore foram removidas e enviadas para o Manager
     
     [Header("Sounds")]
     public AudioClip hitSound;
@@ -65,25 +65,12 @@ public class HitBar : MonoBehaviour
         {
             hits++;
             if (SoundManager.instance) SoundManager.instance.PlaySFX(hitSound);
-            Destroy(note.gameObject);
+            Destroy(note.gameObject); // Mantido conforme sua solicitação
             notesInside.Remove(note);
         }
         else
         {
             if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
         }
-    }
-    
-    public void CalculateScore()
-    {
-        float accuracy = (float)hits / totalNotes;
-
-        if (accuracy >= 1f) score = 10;
-        else if (accuracy >= 0.7f) score = 7;
-        else if (accuracy >= 0.5f) score = 5;
-        else if (accuracy >= 0.2f) score = 2;
-        else score = 0;
-
-        Debug.Log("Pontuação final: " + score);
     }
 }
