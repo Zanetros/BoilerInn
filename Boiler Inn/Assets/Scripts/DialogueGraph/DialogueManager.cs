@@ -21,20 +21,14 @@ public class DialogueManager : MonoBehaviour
     public Button choiceButtonPrefab;
     public Transform choiceButtonContainer;
     
+    // A lista de eventos foi removida daqui!
+    
     [Header("Text Settings")]
     [SerializeField] private float typingSpeed = 0.05f;
-    
     private Coroutine typingCoroutine; 
-    private WaitForSeconds typingDelay; // CACHE: Evita criar lixo na memória toda letra
     
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
-    public RunTimeDialogueNode currentNode { get; private set; }
-
-    private void Awake()
-    {
-        // Cacheia a espera para performance extrema
-        typingDelay = new WaitForSeconds(typingSpeed);
-    }
+    public RunTimeDialogueNode currentNode;
 
     private void Start()
     {
@@ -49,6 +43,7 @@ public class DialogueManager : MonoBehaviour
 
     public void Update()
     {
+        // Avança o diálogo se não houver escolhas
         if (dialoguePanel.activeSelf && Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
         {
             if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
@@ -58,25 +53,33 @@ public class DialogueManager : MonoBehaviour
 
     private void ShowNode(string nodeID)
     {
-        if (!nodeLookup.TryGetValue(nodeID, out RunTimeDialogueNode node))
+        if (!nodeLookup.ContainsKey(nodeID))
         {
             EndDialogue();
             return;
         }
     
-        currentNode = node;
+        currentNode = nodeLookup[nodeID];
 
+        // --- DISPARO DE EVENTO PARA O MINIGAME MANAGER ---
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
             dialoguePanel.SetActive(false);
             if (typingCoroutine != null) StopCoroutine(typingCoroutine);
 
-            if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
-            else Debug.LogWarning("MiniGameManager instance not found!");
-            
+            // Agora chamamos o MiniGameManager passando o ID do evento diretamente
+            if (MiniGameManager.instance != null)
+            {
+                MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
+            }
+            else
+            {
+                Debug.LogWarning("MiniGameManager instance not found!");
+            }
             return; 
         }
 
+        // --- EXIBIÇÃO DE DIÁLOGO NORMAL ---
         dialoguePanel.SetActive(true);
         speakerNameText.SetText(currentNode.SpeakerName);
     
@@ -102,14 +105,19 @@ public class DialogueManager : MonoBehaviour
             foreach (var choice in currentNode.Choices)
             {
                 Button button = Instantiate(choiceButtonPrefab, choiceButtonContainer);
-                if (button.GetComponentInChildren<TextMeshProUGUI>() is TextMeshProUGUI buttonText)
-                {
-                    buttonText.text = choice.ChoiceText;
+                TextMeshProUGUI buttonText = button.GetComponentInChildren<TextMeshProUGUI>();
+                if (buttonText != null) buttonText.text = choice.ChoiceText;
 
-                    if (currentNode.isHotelNode && choice.ChoiceText == "Accept" && !HotelManager.instance.HasAvailableRoom())
+                // --- LÓGICA DO HOTEL ---
+                if (currentNode.isHotelNode)
+                {
+                    if (choice.ChoiceText == "Accept")
                     {
-                        button.interactable = false;
-                        buttonText.text += " (Hotel Full)";
+                        if (!HotelManager.instance.HasAvailableRoom())
+                        {
+                            button.interactable = false;
+                            if (buttonText != null) buttonText.text += " (Hotel Full)";
+                        }
                     }
                 }
 
@@ -143,18 +151,12 @@ public class DialogueManager : MonoBehaviour
     
     private IEnumerator TypeText(string text)
     {
-        // OTIMIZAÇÃO MAXIMA: Usa a função nativa do TMPro para evitar alocação de Strings
-        dialogueText.text = text;
-        dialogueText.maxVisibleCharacters = 0;
-
-        int totalCharacters = text.Length;
-        
-        for (int i = 0; i <= totalCharacters; i++)
+        dialogueText.SetText(""); 
+        foreach (char letter in text.ToCharArray())
         {
-            dialogueText.maxVisibleCharacters = i;
-            yield return typingDelay; // Usa a espera cacheada
+            dialogueText.text += letter; 
+            yield return new WaitForSeconds(typingSpeed); 
         }
-        
         typingCoroutine = null;
     }
 }

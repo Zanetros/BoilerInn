@@ -7,41 +7,32 @@ public class MiniGameManager : MonoBehaviour
     public static MiniGameManager instance;
     
     [Header("Global UI")]
+    public GameObject miniGameUI;
     public GameObject dialogueUI;
     public GameObject finalScoreUI;
     public DialogueManager dialogueManager;
 
+    // Estrutura que mapeia o ID do evento para o objeto do minigame
     [Serializable]
     public struct MinigameEntry
     {
         public string eventID;
-        public GameObject minigameContainer;
+        public GameObject minigameContainer; // O objeto pai que contém o minigame específico
     }
 
     [Header("Minigames Database")]
     public List<MinigameEntry> minigamesList = new List<MinigameEntry>();
 
-    // OTIMIZAÇÃO: Dicionário faz a busca do jogo ser instantânea na memória
-    private Dictionary<string, GameObject> minigameDictionary = new Dictionary<string, GameObject>();
-
-    private GameObject activeMinigameContainer; 
+    private GameObject activeMinigameContainer; // Guarda qual minigame está rodando agora
     private bool isGameActive = false;
 
     private void Awake()
     {
         if (instance == null) instance = this;
         else Destroy(gameObject);
-
-        // Preenche o dicionário ao iniciar o jogo para pesquisas super rápidas
-        foreach (var entry in minigamesList)
-        {
-            if (!minigameDictionary.ContainsKey(entry.eventID))
-            {
-                minigameDictionary.Add(entry.eventID, entry.minigameContainer);
-            }
-        }
     }
     
+    // Chamado pelo DialogueManager passando o ID do nó
     public void TriggerMinigame(string eventID)
     {
         if (dialogueManager == null || dialogueManager.currentNode == null) return;
@@ -49,9 +40,20 @@ public class MiniGameManager : MonoBehaviour
 
         if (CheckRequirements(nodeData.cyberCost, nodeData.implantsCost, nodeData.chipsCost))
         {
-            // OTIMIZAÇÃO: Busca instantânea sem loop 'foreach'
-            if (minigameDictionary.TryGetValue(eventID, out activeMinigameContainer))
+            // Busca o minigame correto na lista
+            foreach (var minigame in minigamesList)
             {
+                if (minigame.eventID == eventID)
+                {
+                    activeMinigameContainer = minigame.minigameContainer;
+                    break;
+                }
+            }
+
+            // Se achou o minigame, liga tudo
+            if (activeMinigameContainer != null)
+            {
+                miniGameUI.SetActive(true);
                 activeMinigameContainer.SetActive(true); // Liga APENAS o minigame solicitado
                 dialogueUI.SetActive(false);
                 isGameActive = true;
@@ -60,7 +62,7 @@ public class MiniGameManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"Minigame with EventID '{eventID}' not found in dictionary!");
+                Debug.LogWarning($"Minigame with EventID '{eventID}' not found in MiniGameManager list!");
                 dialogueManager.ResumeDialogueAfterEvent();
             }
         }
@@ -73,34 +75,36 @@ public class MiniGameManager : MonoBehaviour
 
     private bool CheckRequirements(int reqCyber, int reqImplants, int reqChips)
     {
-        if (CurrencyManager.instance == null) return false;
+        CurrencyManager wallet = CurrencyManager.instance;
+        if (wallet == null) return false;
 
-        return CurrencyManager.instance.cybercurrency >= reqCyber && 
-               CurrencyManager.instance.implants >= reqImplants && 
-               CurrencyManager.instance.chips >= reqChips;
+        return wallet.cybercurrency >= reqCyber && 
+               wallet.implants >= reqImplants && 
+               wallet.chips >= reqChips;
     }
 
+    // Chamado pelo script controlador de cada minigame individual quando eles terminam
     public void FinalScore()
     {
         if (!isGameActive) return;
         finalScoreUI.SetActive(true);
+        // Desligamos o minigame atual para não continuar rodando atrás do painel de score
+        if (activeMinigameContainer != null) activeMinigameContainer.SetActive(false); 
     }
 
+    // Geralmente chamado por um botão na tela de "FinalScoreUI"
     public void FinishMiniGame()
     {
         isGameActive = false;
-
-        finalScoreUI.SetActive(false);
-
-        //Desliga o minigame atual específico antes de limpar a referência
-        if (activeMinigameContainer != null)
-        {
-            activeMinigameContainer.SetActive(false);
-            activeMinigameContainer = null;
-        }
         
+        miniGameUI.SetActive(false);
+        finalScoreUI.SetActive(false);
+        activeMinigameContainer = null;
         dialogueUI.SetActive(true);
 
-        if (dialogueManager != null) dialogueManager.ResumeDialogueAfterEvent();
+        if (dialogueManager != null)
+        {
+            dialogueManager.ResumeDialogueAfterEvent();
+        }
     }
 }
