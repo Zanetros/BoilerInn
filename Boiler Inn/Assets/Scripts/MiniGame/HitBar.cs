@@ -18,11 +18,15 @@ public class HitBar : MonoBehaviour
     public AudioClip hitSound;
     public AudioClip missSound;
 
-    public int totalNotes = 20; // Ajuste para o mesmo valor do maxSpawns
+    [Header("Visual Effects (VFX)")]
+    public GameObject hitEffectPrefab; // Arraste seu prefab de partícula aqui
+    private List<GameObject> effectPool = new List<GameObject>(); // Piscina das partículas
+
+    public int totalNotes = 20;
 
     private void OnEnable()
     {
-        hits = 0; // Resetar hits ao começar
+        hits = 0; 
         redKey.action.started += OnRedPressed;
         blueKey.action.started += OnBluePressed;
         yellowKey.action.started += OnYellowPressed;
@@ -41,14 +45,18 @@ public class HitBar : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        NoteData note = other.GetComponent<NoteData>();
-        if (note != null) notesInside.Add(note);
+        if (other.TryGetComponent(out NoteData note))
+        {
+            notesInside.Add(note);
+        }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        NoteData note = other.GetComponent<NoteData>();
-        if (note != null) notesInside.Remove(note);
+        if (other.TryGetComponent(out NoteData note))
+        {
+            notesInside.Remove(note);
+        }
     }
 
     void TryHit(string inputColor)
@@ -65,12 +73,53 @@ public class HitBar : MonoBehaviour
         {
             hits++;
             if (SoundManager.instance) SoundManager.instance.PlaySFX(hitSound);
-            Destroy(note.gameObject);
-            notesInside.Remove(note);
+            
+            // Toca o efeito visual reciclado na posição da nota
+            SpawnHitEffect(note.transform.position);
+            
+            // Remove da lista interna
+            notesInside.RemoveAt(0);
+            
+            // OTIMIZAÇÃO: Apenas desliga a nota, devolvendo-a para a piscina do Spawner!
+            note.gameObject.SetActive(false);
         }
         else
         {
             if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
+        }
+    }
+
+    // Função que recicla e toca as partículas
+    private void SpawnHitEffect(Vector3 position)
+    {
+        if (hitEffectPrefab == null) return;
+
+        // Tenta achar uma partícula desligada na piscina
+        GameObject effect = null;
+        foreach (GameObject obj in effectPool)
+        {
+            if (!obj.activeInHierarchy)
+            {
+                effect = obj;
+                break;
+            }
+        }
+
+        // Se a piscina estiver vazia ou todos os efeitos estiverem tocando, cria um novo
+        if (effect == null)
+        {
+            effect = Instantiate(hitEffectPrefab);
+            effectPool.Add(effect);
+        }
+
+        // Posiciona no local do acerto e liga
+        effect.transform.position = position;
+        effect.SetActive(true);
+
+        // Manda o sistema de partículas rodar
+        if (effect.TryGetComponent(out ParticleSystem ps))
+        {
+            ps.Play();
         }
     }
     
@@ -84,6 +133,6 @@ public class HitBar : MonoBehaviour
         else if (accuracy >= 0.2f) score = 2;
         else score = 0;
 
-        Debug.Log("Pontuação final: " + score);
+        Debug.Log("Final Score: " + score);
     }
 }
