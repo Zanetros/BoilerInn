@@ -5681,7 +5681,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ImpostorManager
   chippedCharacter: {fileID: 0}
-  gameOverPanel: {fileID: 0}
+  gameOverPanel: {fileID: 1940844407}
 --- !u!1 &1957276335
 GameObject:
   m_ObjectHideFlags: 0

@@ -149,12 +149,29 @@ public class DialogueManager : MonoBehaviour
                 if (button.GetComponentInChildren<TextMeshProUGUI>() is TextMeshProUGUI buttonText)
                 {
                     buttonText.text = choice.ChoiceText;
+
+                    // --- TRAVA VISUAL DO CHIP ESPIÃO ---
+                    // IMPORTANTE: Coloque aqui EXATAMENTE o texto que você digita no seu Grafo!
+                    if (choice.ChoiceText == "Yes") 
+                    {
+                        // Checa no Manager se o chip já foi gasto em algum momento do jogo
+                        if (ImpostorManager.instance != null && ImpostorManager.instance.HasUsedChip)
+                        {
+                            button.interactable = false; // Desliga o botão (fica cinza e não clicável)
+                        }
+                    }
+                    // -----------------------------------
                 }
 
                 button.onClick.AddListener(() =>
                 {
-                    // Como as mecânicas complexas foram para Action Nodes, os botões
-                    // voltam a fazer apenas o básico: nos levar para o próximo nó!
+                    // Lógica do Check-in do Hotel
+                    if (currentNode.isHotelNode && choice.ChoiceText == "Accept")
+                    {
+                        if (HotelManager.instance != null) HotelManager.instance.AddGuest(currentNode.guestID);
+                    }
+
+                    // Avança para o próximo nó
                     if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
                     else EndDialogue();
                 });
