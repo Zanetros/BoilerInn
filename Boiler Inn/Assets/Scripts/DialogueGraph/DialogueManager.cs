@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -25,14 +24,13 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private float typingSpeed = 0.05f;
     
     private Coroutine typingCoroutine; 
-    private WaitForSeconds typingDelay;
+    private WaitForSeconds typingDelay; // CACHE: Evita criar lixo na memória toda letra
     
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
     public RunTimeDialogueNode currentNode { get; private set; }
 
     private void Awake()
     {
-        // Cacheia a espera para performance extrema
         typingDelay = new WaitForSeconds(typingSpeed);
     }
 
@@ -49,6 +47,7 @@ public class DialogueManager : MonoBehaviour
 
     public void Update()
     {
+        // Avança o diálogo com o clique do mouse se não houver escolhas na tela
         if (dialoguePanel.activeSelf && Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
         {
             if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
@@ -66,48 +65,82 @@ public class DialogueManager : MonoBehaviour
     
         currentNode = node;
 
-        // --- NOVA MECÂNICA: Check-in Automático do Hotel ---
-        // Se o nó for do tipo Hotel, o hóspede entra automaticamente na base!
-        if (currentNode.isHotelNode)
+        // --- NÓ DE HOTEL: Check-in Automático e Invisível ---
+        if (currentNode.isHotelNode && HotelManager.instance != null)
         {
-            if (HotelManager.instance != null)
-            {
-                HotelManager.instance.AddGuest(currentNode.guestID);
-            }
+            HotelManager.instance.AddGuest(currentNode.guestID);
         }
-        // ---------------------------------------------------
 
+        // --- NÓ DO IMPOSTOR: Checagem Automática e Invisível ---
+        if (currentNode.isImpostorNode)
+        {
+            if (ImpostorManager.instance != null && currentNode.speakerProfile != null)
+            {
+                // Guarda o estado anterior para saber se estamos gastando o chip AGORA
+                bool hadUsedChipBefore = ImpostorManager.instance.HasUsedChip;
+                
+                // Manda o Manager agir (se o chip já foi usado, ele só dá um Debug.LogWarning)
+                ImpostorManager.instance.PlantChip(currentNode.speakerProfile);
+
+                // Se o NPC NÃO era o impostor e o jogador de fato gastou o chip agorinha...
+                if (!currentNode.speakerProfile.isImpostor && !hadUsedChipBefore)
+                {
+                    // Encerramos o diálogo na hora para o Game Over brilhar.
+                    EndDialogue();
+                    return; 
+                }
+            }
+
+            // O nó invisível pula instantaneamente para a próxima fala!
+            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
+            else EndDialogue();
+            
+            return; // Retorna para impedir que o script tente desenhar a UI abaixo
+        }
+
+        // --- NÓ DE EVENTO: Minigame ---
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
             dialoguePanel.SetActive(false);
             if (typingCoroutine != null) StopCoroutine(typingCoroutine);
 
             if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
-            else Debug.LogWarning("MiniGameManager instance not found!");
-            
             return; 
         }
 
+        // ==========================================
+        // CONFIGURAÇÃO DA UI PARA DIÁLOGOS NORMAIS
+        // ==========================================
         dialoguePanel.SetActive(true);
-        speakerNameText.SetText(currentNode.SpeakerName);
+        
+        // Puxa as informações do CharacterProfile
+        if (currentNode.speakerProfile != null)
+        {
+            speakerNameText.SetText(currentNode.speakerProfile.characterName);
+            if (currentNode.speakerProfile.characterSprite != null)
+            {
+                portrait.sprite = currentNode.speakerProfile.characterSprite;
+                characterSprite.sprite = currentNode.speakerProfile.characterSprite;
+                characterSprite.SetNativeSize();
+            }
+        }
+        else
+        {
+            speakerNameText.SetText("???");
+        }
     
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         typingCoroutine = StartCoroutine(TypeText(currentNode.DialogueText));
-
-        if (currentNode.Sprite != null)
-        {
-            portrait.sprite = currentNode.Sprite;
-            characterSprite.sprite = currentNode.Sprite;
-            characterSprite.SetNativeSize();
-        }
         
         RefreshChoices();
     }
 
     private void RefreshChoices()
     {
+        // Limpa os botões antigos
         foreach (Transform child in choiceButtonContainer) Destroy(child.gameObject);
 
+        // Se houver escolhas (ChoiceNode), cria os botões
         if (currentNode.Choices.Count > 0)
         {
             foreach (var choice in currentNode.Choices)
@@ -118,10 +151,10 @@ public class DialogueManager : MonoBehaviour
                     buttonText.text = choice.ChoiceText;
                 }
 
-                // OTIMIZAÇÃO/LIMPEZA: Como o Hotel é automático agora, a lógica dos botões 
-                // volta a ser simples e focada apenas em avançar os nós de diálogo normal.
                 button.onClick.AddListener(() =>
                 {
+                    // Como as mecânicas complexas foram para Action Nodes, os botões
+                    // voltam a fazer apenas o básico: nos levar para o próximo nó!
                     if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
                     else EndDialogue();
                 });
@@ -145,18 +178,15 @@ public class DialogueManager : MonoBehaviour
     
     private IEnumerator TypeText(string text)
     {
-        // OTIMIZAÇÃO MAXIMA: Usa a função nativa do TMPro para evitar alocação de Strings
         dialogueText.text = text;
         dialogueText.maxVisibleCharacters = 0;
-
         int totalCharacters = text.Length;
         
         for (int i = 0; i <= totalCharacters; i++)
         {
             dialogueText.maxVisibleCharacters = i;
-            yield return typingDelay; // Usa a espera cacheada
+            yield return typingDelay; 
         }
-        
         typingCoroutine = null;
     }
 }

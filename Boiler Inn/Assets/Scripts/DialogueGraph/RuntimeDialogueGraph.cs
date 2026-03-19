@@ -12,26 +12,23 @@ public class RuntimeDialogueGraph : ScriptableObject
 public class RunTimeDialogueNode
 {
     public string NodeID;
-    public string SpeakerName;
+    
+    // NOVO: Referência direta ao perfil do personagem
+    public CharacterProfile speakerProfile; 
+    
     public string DialogueText;
-    
     public List<ChoiceData> Choices = new List<ChoiceData>();
-    
-    public Sprite Sprite;
-    
     public string NextNodeID;
     
     public string EventID;
-    
     public int cyberCost;
     public int implantsCost;
     public int chipsCost;
     
     public bool isHotelNode;
     public string guestID;
-    
-    public bool isSpyNode; 
-    public bool isImpostor; 
+
+    public bool isImpostorNode; 
 }
 
 [Serializable]
