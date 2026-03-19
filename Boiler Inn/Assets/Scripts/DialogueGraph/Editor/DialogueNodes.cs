@@ -21,6 +21,20 @@ public class EndNode : Node
 }
 
 [Serializable]
+public class EventNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+        context.AddOutputPort("out").Build();
+        context.AddInputPort<string>("EventID").Build(); 
+        context.AddInputPort<int>("CyberCost").WithDisplayName("Cybercurrency Cost").Build();
+        context.AddInputPort<int>("ImplantsCost").WithDisplayName("Implants Cost").Build();
+        context.AddInputPort<int>("ChipsCost").WithDisplayName("Chips Cost").Build();
+    }
+}
+
+[Serializable]
 public class DialogueNode : Node
 {
     protected override void OnDefinePorts(IPortDefinitionContext context)
@@ -28,25 +42,22 @@ public class DialogueNode : Node
         context.AddInputPort("in").Build();
         context.AddOutputPort("out").Build();
         
-        context.AddInputPort<string>("Speaker").Build();
-        context.AddInputPort<Sprite>("Sprite").WithDisplayName("Character Sprite").WithConnectorUI(PortConnectorUI.Arrowhead).Build();
+        context.AddInputPort<CharacterProfile>("Speaker Profile").Build();
         context.AddInputPort<string>("Dialogue").Build();
     }
 }
 
 [Serializable]
-public class EventNode : Node
+public class HotelNode : Node
 {
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
         context.AddInputPort("in").Build();
         context.AddOutputPort("out").Build();
         
-        context.AddInputPort<string>("EventID").Build(); 
-        
-        context.AddInputPort<int>("CyberCost").WithDisplayName("Cybercurrency Cost").Build();
-        context.AddInputPort<int>("ImplantsCost").WithDisplayName("Implants Cost").Build();
-        context.AddInputPort<int>("ChipsCost").WithDisplayName("Chips Cost").Build();
+        context.AddInputPort<string>("GuestID").WithDisplayName("Guest ID").Build();
+        context.AddInputPort<CharacterProfile>("Speaker Profile").Build();
+        context.AddInputPort<string>("Dialogue").Build();
     }
 }
 
@@ -58,11 +69,9 @@ public class ChoiceNode : Node
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
         context.AddInputPort("in").Build();
-
-        context.AddInputPort<string>("Speaker").Build();
+        
+        context.AddInputPort<CharacterProfile>("Speaker Profile").Build();
         context.AddInputPort<string>("Dialogue").Build();
-        context.AddInputPort<Sprite>("Sprite").WithDisplayName("Character Sprite")
-            .WithConnectorUI(PortConnectorUI.Arrowhead).Build();
 
         var option = GetNodeOptionByName(optionID);
         option.TryGetValue(out int portCount);
@@ -79,23 +88,14 @@ public class ChoiceNode : Node
 }
 
 [Serializable]
-public class HotelNode : Node
+public class ImpostorNode : Node
 {
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        // Portas de entrada do fluxo
         context.AddInputPort("in").Build();
+        context.AddOutputPort("out").Build();
         
-        // Identificação do hóspede
-        context.AddInputPort<string>("GuestID").WithDisplayName("Guest ID").Build();
-        
-        // Textos e imagens do diálogo de recepção
-        context.AddInputPort<string>("Speaker").Build();
-        context.AddInputPort<string>("Dialogue").Build();
-        context.AddInputPort<Sprite>("Sprite").Build();
-
-        // Portas de saída (Escolhas do jogador)
-        context.AddOutputPort("Choice Accept").WithDisplayName("Accept Guest").Build();
-        context.AddOutputPort("Choice Refuse").WithDisplayName("Refuse Guest").Build();
+        // Pede apenas o perfil do personagem para fazer a checagem
+        context.AddInputPort<CharacterProfile>("Speaker Profile").Build();
     }
 }
