@@ -52,6 +52,10 @@ public class DialogueGraphImporter : ScriptedImporter
             {
                 ProcessHotelNode(hotelNode, runtimeNode, nodeIDMap);
             }
+            else if (iNode is SpyNode spyNode)
+            {
+                ProcessSpyNode(spyNode, runtimeNode, nodeIDMap);
+            }
             
             runtimeGraph.AllNodes.Add(runtimeNode);
         }
@@ -97,11 +101,21 @@ public class DialogueGraphImporter : ScriptedImporter
     
         foreach (var outputPort in choiceOutputPorts)
         {
-            string choiceText = outputPort.name; 
+            // 1. Descobre qual é o número desta escolha (ex: tira "Choice " de "Choice 0" = "0")
+            string index = outputPort.name.Replace("Choice ", "");
+            
+            // 2. Lê o texto que o Game Designer digitou no campo "Choice Text X" correspondente
+            string customChoiceText = GetPortValue<string>(node.GetInputPortByName($"Choice Text {index}"));
+
+            // Se o campo estiver vazio (o designer esqueceu de preencher), usa um texto padrão
+            if (string.IsNullOrEmpty(customChoiceText)) 
+            {
+                customChoiceText = $"Opção {index}"; 
+            }
         
             var choiceData = new ChoiceData
             {
-                ChoiceText = choiceText,
+                ChoiceText = customChoiceText, // <-- Agora usa o texto customizado!
                 DestinationNodeID = outputPort.firstConnectedPort != null
                     ? nodeIDMap[outputPort.firstConnectedPort.GetNode()]
                     : null
@@ -116,30 +130,51 @@ public class DialogueGraphImporter : ScriptedImporter
         // Define que este nó tem comportamento especial de hotel
         runtimeNode.isHotelNode = true;
     
-        // Lê os dados do hóspede e do diálogo
+        // Lê os dados
         runtimeNode.guestID = GetPortValue<string>(node.GetInputPortByName("GuestID"));
         runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
         runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
         runtimeNode.Sprite = GetPortValue<Sprite>(node.GetInputPortByName("Sprite"));
 
-        // Mapeia a porta de "Aceitar"
-        var acceptPort = node.GetOutputPortByName("Choice Accept")?.firstConnectedPort;
-        if (acceptPort != null)
+        // Agora o nó de Hotel age como um DialogueNode normal, com apenas um caminho a seguir
+        var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
+        if (nextNodePort != null)
         {
-            runtimeNode.Choices.Add(new ChoiceData { 
-                ChoiceText = "Accept", 
-                DestinationNodeID = nodeIDMap[acceptPort.GetNode()] 
-            });
+            runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
         }
+    }
+    
+    private void ProcessSpyNode(SpyNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        runtimeNode.isSpyNode = true;
+        runtimeNode.isImpostor = GetPortValue<bool>(node.GetInputPortByName("Impostor"));
 
-        // Mapeia a porta de "Recusar"
-        var refusePort = node.GetOutputPortByName("Choice Refuse")?.firstConnectedPort;
-        if (refusePort != null)
+        runtimeNode.SpeakerName = GetPortValue<string>(node.GetInputPortByName("Speaker"));
+        runtimeNode.DialogueText = GetPortValue<string>(node.GetInputPortByName("Dialogue"));
+        runtimeNode.Sprite = GetPortValue<Sprite>(node.GetInputPortByName("Sprite"));
+    
+        var choiceOutputPorts = node.GetOutputPorts().Where(p => p.name.StartsWith("Choice "));
+    
+        foreach (var outputPort in choiceOutputPorts)
         {
-            runtimeNode.Choices.Add(new ChoiceData { 
-                ChoiceText = "Refuse", 
-                DestinationNodeID = nodeIDMap[refusePort.GetNode()] 
-            });
+            // Faz exatamente a mesma lógica para ler o texto customizado do SpyNode
+            string index = outputPort.name.Replace("Choice ", "");
+            string customChoiceText = GetPortValue<string>(node.GetInputPortByName($"Choice Text {index}"));
+
+            if (string.IsNullOrEmpty(customChoiceText)) 
+            {
+                customChoiceText = $"Opção {index}"; 
+            }
+        
+            var choiceData = new ChoiceData
+            {
+                ChoiceText = customChoiceText, // <-- Agora usa o texto customizado!
+                DestinationNodeID = outputPort.firstConnectedPort != null
+                    ? nodeIDMap[outputPort.firstConnectedPort.GetNode()]
+                    : null
+            };
+        
+            runtimeNode.Choices.Add(choiceData);
         }
     }
     

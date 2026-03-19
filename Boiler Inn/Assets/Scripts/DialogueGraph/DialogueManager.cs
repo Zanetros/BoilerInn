@@ -25,7 +25,7 @@ public class DialogueManager : MonoBehaviour
     [SerializeField] private float typingSpeed = 0.05f;
     
     private Coroutine typingCoroutine; 
-    private WaitForSeconds typingDelay; // CACHE: Evita criar lixo na memória toda letra
+    private WaitForSeconds typingDelay;
     
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
     public RunTimeDialogueNode currentNode { get; private set; }
@@ -66,6 +66,17 @@ public class DialogueManager : MonoBehaviour
     
         currentNode = node;
 
+        // --- NOVA MECÂNICA: Check-in Automático do Hotel ---
+        // Se o nó for do tipo Hotel, o hóspede entra automaticamente na base!
+        if (currentNode.isHotelNode)
+        {
+            if (HotelManager.instance != null)
+            {
+                HotelManager.instance.AddGuest(currentNode.guestID);
+            }
+        }
+        // ---------------------------------------------------
+
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
             dialoguePanel.SetActive(false);
@@ -105,21 +116,12 @@ public class DialogueManager : MonoBehaviour
                 if (button.GetComponentInChildren<TextMeshProUGUI>() is TextMeshProUGUI buttonText)
                 {
                     buttonText.text = choice.ChoiceText;
-
-                    if (currentNode.isHotelNode && choice.ChoiceText == "Accept" && !HotelManager.instance.HasAvailableRoom())
-                    {
-                        button.interactable = false;
-                        buttonText.text += " (Hotel Full)";
-                    }
                 }
 
+                // OTIMIZAÇÃO/LIMPEZA: Como o Hotel é automático agora, a lógica dos botões 
+                // volta a ser simples e focada apenas em avançar os nós de diálogo normal.
                 button.onClick.AddListener(() =>
                 {
-                    if (currentNode.isHotelNode && choice.ChoiceText == "Accept")
-                    {
-                        HotelManager.instance.AddGuest(currentNode.guestID);
-                    }
-
                     if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
                     else EndDialogue();
                 });

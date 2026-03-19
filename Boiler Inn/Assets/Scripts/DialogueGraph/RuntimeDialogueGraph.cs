@@ -29,6 +29,9 @@ public class RunTimeDialogueNode
     
     public bool isHotelNode;
     public string guestID;
+    
+    public bool isSpyNode; 
+    public bool isImpostor; 
 }
 
 [Serializable]

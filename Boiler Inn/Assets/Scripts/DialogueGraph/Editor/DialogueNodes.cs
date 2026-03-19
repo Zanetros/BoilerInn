@@ -83,19 +83,49 @@ public class HotelNode : Node
 {
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
-        // Portas de entrada do fluxo
+        // Porta de entrada e saída padrão
         context.AddInputPort("in").Build();
+        context.AddOutputPort("out").Build(); // Mudou aqui! Apenas uma saída.
         
         // Identificação do hóspede
         context.AddInputPort<string>("GuestID").WithDisplayName("Guest ID").Build();
         
-        // Textos e imagens do diálogo de recepção
+        // Textos e imagens
         context.AddInputPort<string>("Speaker").Build();
         context.AddInputPort<string>("Dialogue").Build();
         context.AddInputPort<Sprite>("Sprite").Build();
+    }
+}
 
-        // Portas de saída (Escolhas do jogador)
-        context.AddOutputPort("Choice Accept").WithDisplayName("Accept Guest").Build();
-        context.AddOutputPort("Choice Refuse").WithDisplayName("Refuse Guest").Build();
+[Serializable]
+public class SpyNode : Node
+{
+    const string optionID = "portCount";
+
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+
+        // A flag principal que difere este nó do ChoiceNode
+        context.AddInputPort<bool>("Impostor").WithDisplayName("Is Impostor?").Build();
+
+        context.AddInputPort<string>("Speaker").Build();
+        context.AddInputPort<string>("Dialogue").Build();
+        context.AddInputPort<Sprite>("Sprite").WithDisplayName("Character Sprite")
+            .WithConnectorUI(PortConnectorUI.Arrowhead).Build();
+
+        var option = GetNodeOptionByName(optionID);
+        option.TryGetValue(out int portCount);
+        
+        for (int i = 0; i < portCount; i++)
+        {
+            context.AddInputPort<string>($"Choice Text {i}").Build();
+            context.AddOutputPort($"Choice {i}").Build();
+        }
+    }
+    
+    protected override void OnDefineOptions(IOptionDefinitionContext context)
+    {
+        context.AddOption<int>(optionID).WithDefaultValue(2).Delayed();
     }
 }
