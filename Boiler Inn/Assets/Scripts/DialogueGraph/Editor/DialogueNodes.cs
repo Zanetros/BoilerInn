@@ -99,3 +99,19 @@ public class ImpostorNode : Node
         context.AddInputPort<CharacterProfile>("Speaker Profile").Build();
     }
 }
+
+[Serializable]
+public class ConditionNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+        
+        // Pede um nome para saber qual condição checar (ex: "ImpostorCaught")
+        context.AddInputPort<string>("Condition ID").Build(); 
+        
+        // As duas saídas possíveis
+        context.AddOutputPort("True").WithDisplayName("If True").Build();
+        context.AddOutputPort("False").WithDisplayName("If False").Build();
+    }
+}

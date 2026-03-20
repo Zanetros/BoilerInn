@@ -34,6 +34,7 @@ public class DialogueGraphImporter : ScriptedImporter
             else if (iNode is EventNode eventNode) ProcessEventNode(eventNode, runtimeNode, nodeIDMap);
             else if (iNode is HotelNode hotelNode) ProcessHotelNode(hotelNode, runtimeNode, nodeIDMap);
             else if (iNode is ImpostorNode impostorNode) ProcessImpostorNode(impostorNode, runtimeNode, nodeIDMap);
+            else if (iNode is ConditionNode conditionNode) ProcessConditionNode(conditionNode, runtimeNode, nodeIDMap);
             
             runtimeGraph.AllNodes.Add(runtimeNode);
         }
@@ -105,6 +106,20 @@ public class DialogueGraphImporter : ScriptedImporter
         {
             runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
         }
+    }
+    
+    private void ProcessConditionNode(ConditionNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        runtimeNode.isConditionNode = true;
+        
+        // Lê o texto que o Game Designer digitou no campo Condition ID
+        runtimeNode.conditionID = GetPortValue<string>(node.GetInputPortByName("Condition ID"));
+        
+        var truePort = node.GetOutputPortByName("True")?.firstConnectedPort;
+        if (truePort != null) runtimeNode.NextNodeID_True = nodeIDMap[truePort.GetNode()];
+
+        var falsePort = node.GetOutputPortByName("False")?.firstConnectedPort;
+        if (falsePort != null) runtimeNode.NextNodeID_False = nodeIDMap[falsePort.GetNode()];
     }
     
     private T GetPortValue<T>(IPort port)

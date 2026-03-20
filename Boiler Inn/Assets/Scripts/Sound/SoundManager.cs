@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using System.Collections; // Necessário para usar Coroutines
 
 public class SoundManager : MonoBehaviour
 {
@@ -12,13 +13,17 @@ public class SoundManager : MonoBehaviour
     public AudioSource musicSource;
     public AudioSource sfxSource;
 
+    [Header("Settings")]
+    public float fadeDuration = 1.0f; // Tempo em segundos que a transição vai durar
+
+    private Coroutine currentFadeCoroutine; // Guarda a transição atual para não bugar se trocar muito rápido
+
     void Awake()
     {
-        // Sistema Singleton: Se já existir um, destrói o novo. Se não, sobrevive.
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // A "Mágica" acontece aqui
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
@@ -26,17 +31,59 @@ public class SoundManager : MonoBehaviour
             return;
         }
 
-        // Carrega o volume logo no Awake para não ter delay
         LoadVolume();
     }
     
     public void PlayMusic(AudioClip clip)
     {
-        AudioSource source = GetComponentInChildren<AudioSource>();
-        if (source.clip == clip) return; // Já está tocando essa música? Não faz nada.
+        if (clip == null) return;
+        if (musicSource.clip == clip && musicSource.isPlaying) return; 
+
+        // Se já estiver acontecendo uma transição, a gente cancela ela para começar a nova
+        if (currentFadeCoroutine != null)
+        {
+            StopCoroutine(currentFadeCoroutine);
+        }
+
+        // Inicia a mágica da transição suave
+        currentFadeCoroutine = StartCoroutine(FadeMusic(clip));
+    }
     
-        source.clip = clip;
-        source.Play();
+    public void PlaySFX(AudioClip clip)
+    {
+        sfxSource.PlayOneShot(clip);
+    }
+
+    private IEnumerator FadeMusic(AudioClip newClip)
+    {
+        // 1. FADE OUT (Abaixa a música atual, se estiver tocando)
+        if (musicSource.isPlaying)
+        {
+            float startVolume = musicSource.volume;
+            
+            while (musicSource.volume > 0)
+            {
+                // Diminui o volume aos poucos (fadeDuration / 2 para ser metade do tempo descendo)
+                musicSource.volume -= startVolume * Time.deltaTime / (fadeDuration / 2);
+                yield return null; 
+            }
+            musicSource.Stop();
+        }
+
+        // 2. TROCA A FAIXA
+        musicSource.clip = newClip;
+        musicSource.Play();
+
+        // 3. FADE IN (Sobe o volume da música nova até 1)
+        while (musicSource.volume < 1f)
+        {
+            musicSource.volume += Time.deltaTime / (fadeDuration / 2);
+            yield return null;
+        }
+
+        // Garante que o volume cravou no máximo (o seu Mixer que dita o quão alto isso realmente é)
+        musicSource.volume = 1f; 
+        currentFadeCoroutine = null;
     }
 
     public void LoadVolume()
@@ -44,22 +91,12 @@ public class SoundManager : MonoBehaviour
         float musicVol = PlayerPrefs.GetFloat("MusicVol", 0.75f);
         float sfxVol = PlayerPrefs.GetFloat("SFXVol", 0.75f);
 
-        // Mathf.Max evita o log de zero (o bug que você teve)
         mainMixer.SetFloat("MusicVol", Mathf.Log10(Mathf.Max(0.0001f, musicVol)) * 20);
         mainMixer.SetFloat("SFXVol", Mathf.Log10(Mathf.Max(0.0001f, sfxVol)) * 20);
     }
 
-    // Método para tocar um efeito sonoro (ex: acerto de nota)
-    public void PlaySFX(AudioClip clip)
-    {
-        sfxSource.PlayOneShot(clip);
-    }
-
-    // Método para alterar o volume via Slider/UI
     public void SetMusicVolume(float volume)
     {
-        // O volume do Mixer usa escala Logarítmica (-80dB a 20dB)
-        // O cálculo abaixo converte 0.0001-1.0 para dB
-        mainMixer.SetFloat("MusicVol", Mathf.Log10(volume) * 20);
+        mainMixer.SetFloat("MusicVol", Mathf.Log10(Mathf.Max(0.0001f, volume)) * 20);
     }
 }

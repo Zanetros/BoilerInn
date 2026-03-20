@@ -13,7 +13,7 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialoguePanel;
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
-    public Image portrait;
+    //public Image portrait;
     public Image characterSprite;
     
     [Header("Choice Button UI")]
@@ -22,6 +22,9 @@ public class DialogueManager : MonoBehaviour
     
     [Header("Text Settings")]
     [SerializeField] private float typingSpeed = 0.05f;
+    
+    [Header("Audio Settings")]
+    public AudioClip typingSound;
     
     private Coroutine typingCoroutine; 
     private WaitForSeconds typingDelay; // CACHE: Evita criar lixo na memória toda letra
@@ -98,6 +101,28 @@ public class DialogueManager : MonoBehaviour
             return; // Retorna para impedir que o script tente desenhar a UI abaixo
         }
 
+        // --- NÓ DE CONDIÇÃO (Bifurcação Invisível) ---
+        if (currentNode.isConditionNode)
+        {
+            bool conditionMet = false;
+
+            // 1. O seu "Dicionário" de Condições:
+            if (currentNode.conditionID == "ImpostorCaught")
+            {
+                conditionMet = ImpostorManager.isImpostorCaught;
+            }
+            // Adicione mais condições aqui no futuro se precisar!
+
+            // 2. Escolhe o caminho baseado no resultado (True ou False)
+            string nextNode = conditionMet ? currentNode.NextNodeID_True : currentNode.NextNodeID_False;
+
+            // 3. Pula direto para a fala correta!
+            if (!string.IsNullOrEmpty(nextNode)) ShowNode(nextNode);
+            else EndDialogue();
+            
+            return; // Retorna para impedir que o script tente desenhar a UI abaixo
+        }
+
         // --- NÓ DE EVENTO: Minigame ---
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
@@ -108,9 +133,6 @@ public class DialogueManager : MonoBehaviour
             return; 
         }
 
-        // ==========================================
-        // CONFIGURAÇÃO DA UI PARA DIÁLOGOS NORMAIS
-        // ==========================================
         dialoguePanel.SetActive(true);
         
         // Puxa as informações do CharacterProfile
@@ -119,7 +141,7 @@ public class DialogueManager : MonoBehaviour
             speakerNameText.SetText(currentNode.speakerProfile.characterName);
             if (currentNode.speakerProfile.characterSprite != null)
             {
-                portrait.sprite = currentNode.speakerProfile.characterSprite;
+                //portrait.sprite = currentNode.speakerProfile.characterSprite;
                 characterSprite.sprite = currentNode.speakerProfile.characterSprite;
                 characterSprite.SetNativeSize();
             }
@@ -130,6 +152,12 @@ public class DialogueManager : MonoBehaviour
         }
     
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+        
+        if (typingSound != null && SoundManager.instance != null)
+        {
+            SoundManager.instance.PlaySFX(typingSound);
+        }
+        
         typingCoroutine = StartCoroutine(TypeText(currentNode.DialogueText));
         
         RefreshChoices();
