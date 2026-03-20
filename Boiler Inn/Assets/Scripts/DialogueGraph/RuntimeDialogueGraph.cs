@@ -29,6 +29,11 @@ public class RunTimeDialogueNode
     public string guestID;
 
     public bool isImpostorNode; 
+    
+    public bool isConditionNode;
+    public string conditionID;
+    public string NextNodeID_True; 
+    public string NextNodeID_False;
 }
 
 [Serializable]
