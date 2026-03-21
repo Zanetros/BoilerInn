@@ -50,6 +50,9 @@ public class PauseMenu : MonoBehaviour
         optionsMenuPanel.SetActive(false);
         Time.timeScale = 0f;
         IsGamePaused = true;
+        
+        // PAUSA TODOS OS SONS DA CENA
+        AudioListener.pause = true; 
     }
     
     public void ResumeGame()
@@ -58,6 +61,9 @@ public class PauseMenu : MonoBehaviour
         optionsMenuPanel.SetActive(false);
         Time.timeScale = 1f;
         IsGamePaused = false;
+        
+        // RETOMA TODOS OS SONS
+        AudioListener.pause = false;
     }
 
     // Transição entre Menu de Pausa e Opções
@@ -76,6 +82,17 @@ public class PauseMenu : MonoBehaviour
     public void LoadMainMenu(int sceneName)
     {
         Time.timeScale = 1f;
+        IsGamePaused = false;
+        
+        // 1. Tira o pause do ouvinte para o Menu Principal não começar mudo!
+        AudioListener.pause = false;
+        
+        // 2. Manda o SoundManager cortar o efeito sonoro atual IMEDIATAMENTE (0 segundos)
+        if (SoundManager.instance != null)
+        {
+            SoundManager.instance.FadeOutSFX(0f); 
+        }
+
         SceneManager.LoadScene(sceneName);
     }
 }
