@@ -10,8 +10,11 @@ public class DayManager : MonoBehaviour
     public int currentDay = 1;
 
     [Header("Story Loop System")]
-    // Agora arrastamos os Scriptable Objects direto no Inspector!
+    // A urna atual (que vai esvaziando durante o jogo)
     public List<CharacterProfile> availableCharacters = new List<CharacterProfile>();
+    
+    // O backup da urna (intacto, para quando começar um Novo Jogo)
+    private List<CharacterProfile> originalCharacters = new List<CharacterProfile>();
     
     // O dicionário usa o próprio Perfil como chave para achar o estágio (0, 1, 2)
     public Dictionary<CharacterProfile, int> characterProgress = new Dictionary<CharacterProfile, int>();
@@ -25,6 +28,10 @@ public class DayManager : MonoBehaviour
         {
             instance = this;
             DontDestroyOnLoad(gameObject);
+            
+            // FAZ O BACKUP: Copia os personagens do Inspector antes de qualquer um ser apagado!
+            originalCharacters = new List<CharacterProfile>(availableCharacters);
+            
             InitializeProgress();
         }
         else if (instance != this)
@@ -35,16 +42,31 @@ public class DayManager : MonoBehaviour
 
     private void InitializeProgress()
     {
+        // Limpa o dicionário antes de preencher para evitar duplicações
+        characterProgress.Clear();
         foreach (CharacterProfile profile in availableCharacters)
         {
             characterProgress.Add(profile, 0); 
         }
     }
     
+    // ==========================================
+    // CHAMADO PELO BOTÃO "PLAY" NO MENU PRINCIPAL
+    // ==========================================
     public void StartGameFromMenu()
     {
-        currentDay = 0; // Zera o contador para o StartNewDay somar +1 e virar Dia 1
-        StartNewDay();  // Sorteia o primeiro paciente e abre a clínica!
+        // 1. Zera as variáveis globais
+        currentDay = 0; 
+        todayVisitor = null; 
+
+        // 2. Restaura a urna de sorteio puxando do nosso backup intacto
+        availableCharacters = new List<CharacterProfile>(originalCharacters);
+        
+        // 3. Queima os prontuários antigos e cria novos, todos na Fase 0
+        InitializeProgress(); // Reaproveitamos a função aqui para ficar limpo!
+
+        // 4. Agora sim, começa um jogo 100% limpo!
+        StartNewDay();  
     }
 
     public void StartNewDay()
@@ -56,8 +78,8 @@ public class DayManager : MonoBehaviour
         {
             Debug.Log("Day 1 started! Loading Tutorial.");
             todayVisitor = null; // Não sorteia ninguém!
-            LoadDayScene();      // Chama a sua função com o nome correto!
-            return;              // Interrompe a função aqui para não rodar a roleta
+            LoadDayScene();      
+            return;              
         }
 
         // --- DIA 2 EM DIANTE: A ROLETA FUNCIONA NORMALMENTE ---
@@ -72,7 +94,7 @@ public class DayManager : MonoBehaviour
 
         Debug.Log($"Day {currentDay} started! Visitor: {todayVisitor.characterName} (Stage {characterProgress[todayVisitor]})");
 
-        LoadDayScene(); // Chama a sua função com o nome correto!
+        LoadDayScene(); 
     }
 
     public void AdvanceCharacterStory(CharacterProfile profile)
