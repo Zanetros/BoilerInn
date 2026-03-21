@@ -5,26 +5,21 @@ public class NoteData : MonoBehaviour
     public Vector3 direction;
     public string color;
     
-    private HitBar hitBarReference; 
+    // Escondido no Inspector porque quem preenche isso agora é o Spawner via código!
+    [HideInInspector] public float currentSpeed; 
     
-    // Variável local para guardar a velocidade
-    private float mySpeed = 5f; 
+    private HitBar hitBarReference; 
 
     void Start()
     {
+        // A única coisa que a nota ainda procura é a barra para poder avisar dos erros
         hitBarReference = Object.FindFirstObjectByType<HitBar>();
-        
-        // CACHING: Pergunta a velocidade pro Manager APENAS UMA VEZ no nascimento!
-        if (MiniGameManager.instance != null)
-        {
-            mySpeed = MiniGameManager.instance.currentNoteSpeed;
-        }
     }
 
     void Update()
     {
-        // O Update agora faz apenas matemática básica, zero peso para a CPU!
-        transform.Translate(direction * mySpeed * Time.deltaTime);
+        // Apenas cai, usando a velocidade que o Spawner deu pra ela!
+        transform.Translate(direction * currentSpeed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other) 
