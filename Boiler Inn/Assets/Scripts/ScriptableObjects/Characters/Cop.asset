@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Cop
   m_EditorClassIdentifier: Assembly-CSharp::CharacterProfile
   characterName: Marcus
-  characterSprite: {fileID: 0}
+  characterSprite: {fileID: 9183023814961729290, guid: 222a42f35d42880439b83bc045172e87, type: 3}
   isImpostor: 0
