@@ -36,6 +36,8 @@ public class DialogueGraphImporter : ScriptedImporter
             else if (iNode is ImpostorNode impostorNode) ProcessImpostorNode(impostorNode, runtimeNode, nodeIDMap);
             else if (iNode is ConditionNode conditionNode) ProcessConditionNode(conditionNode, runtimeNode, nodeIDMap);
             else if (iNode is ReceiveNode receiveNode) ProcessReceiveNode(receiveNode, runtimeNode, nodeIDMap);
+            else if (iNode is GoToCityNode cityNode) ProcessGoToCityNode(cityNode, runtimeNode, nodeIDMap);
+            else if (iNode is AdvanceStoryNode advanceNode) ProcessAdvanceStoryNode(advanceNode, runtimeNode, nodeIDMap);
             
             runtimeGraph.AllNodes.Add(runtimeNode);
         }
@@ -131,6 +133,21 @@ public class DialogueGraphImporter : ScriptedImporter
         runtimeNode.cyberCost = GetPortValue<int>(node.GetInputPortByName("CyberReward"));
         runtimeNode.implantsCost = GetPortValue<int>(node.GetInputPortByName("ImplantsReward"));
         runtimeNode.chipsCost = GetPortValue<int>(node.GetInputPortByName("ChipsReward"));
+
+        var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
+        if (nextNodePort != null) runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
+    }
+    
+    private void ProcessGoToCityNode(GoToCityNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        runtimeNode.isGoToCityNode = true;
+    }
+    
+    private void ProcessAdvanceStoryNode(AdvanceStoryNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        runtimeNode.isAdvanceStoryNode = true;
+        
+        runtimeNode.advanceCharacterProfile = GetPortValue<CharacterProfile>(node.GetInputPortByName("Character Profile"));
 
         var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
         if (nextNodePort != null) runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];

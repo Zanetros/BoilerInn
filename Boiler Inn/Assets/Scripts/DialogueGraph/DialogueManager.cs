@@ -8,6 +8,8 @@ using UnityEngine.SceneManagement;
 
 public class DialogueManager : MonoBehaviour
 {
+    public static DialogueManager instance;
+    
     public RuntimeDialogueGraph runtimeGraph;
     
     [Header("UI Components")]
@@ -46,6 +48,9 @@ public class DialogueManager : MonoBehaviour
     private void Awake()
     {
         typingDelay = new WaitForSeconds(typingSpeed);
+        
+        if (instance == null) instance = this;
+        else Destroy(gameObject);
     }
 
     private void Start()
@@ -151,6 +156,37 @@ public class DialogueManager : MonoBehaviour
             if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
             else EndDialogue();
             
+            return; 
+        }
+        
+        if (currentNode.isAdvanceStoryNode)
+        {
+            if (DayManager.instance != null)
+            {
+                // Passa o Scriptable Object diretamente
+                DayManager.instance.AdvanceCharacterStory(currentNode.advanceCharacterProfile);
+            }
+
+            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
+            else EndDialogue();
+            
+            return; 
+        }
+        
+        if (currentNode.isGoToCityNode)
+        {
+            if (DayManager.instance != null)
+            {
+                // Chama o script imortal para trocar a cena
+                DayManager.instance.GoToCity();
+            }
+            else
+            {
+                Debug.LogWarning("DayManager não encontrado na cena!");
+            }
+
+            // Desliga a interface de diálogo atual
+            EndDialogue();
             return; 
         }
 

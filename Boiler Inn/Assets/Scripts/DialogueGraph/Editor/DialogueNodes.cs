@@ -129,3 +129,25 @@ public class ReceiveNode : Node
         context.AddInputPort<int>("ChipsReward").WithDisplayName("Chips Reward").Build();
     }
 }
+
+[Serializable]
+public class GoToCityNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+    }
+}
+
+[Serializable]
+public class AdvanceStoryNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+        context.AddOutputPort("out").Build();
+        
+        // Agora pede o Scriptable Object em vez do número
+        context.AddInputPort<CharacterProfile>("Character Profile").Build();
+    }
+}

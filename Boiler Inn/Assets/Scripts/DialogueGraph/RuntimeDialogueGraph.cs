@@ -25,6 +25,7 @@ public class RunTimeDialogueNode
     public int implantsCost;
     public int chipsCost;
     public bool isReceiveNode;
+    public bool isGoToCityNode;
     
     public bool isHotelNode;
     public string guestID;
@@ -35,6 +36,9 @@ public class RunTimeDialogueNode
     public string conditionID;
     public string NextNodeID_True; 
     public string NextNodeID_False;
+    
+    public bool isAdvanceStoryNode;
+    public CharacterProfile advanceCharacterProfile;
 }
 
 [Serializable]
