@@ -15,11 +15,8 @@ EditorBuildSettings:
     path: Assets/Scenes/Clinic.unity
     guid: 9dbe0a0e97256a44ebe30766c6bebfb2
   - enabled: 1
-    path: Assets/Scenes/Day2.unity
-    guid: aceb337c3ad51a943bfa3de138fdb791
-  - enabled: 0
-    path: Assets/Scenes/Day3.unity
-    guid: b6c878a3aa31c884294102ec04a726e1
+    path: Assets/Scenes/FinalScene.unity
+    guid: e9b9dda9ab7b9304994bf11c265c4aee
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
   m_UseUCBPForAssetBundles: 0

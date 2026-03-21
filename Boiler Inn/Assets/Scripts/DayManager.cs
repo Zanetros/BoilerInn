@@ -40,6 +40,12 @@ public class DayManager : MonoBehaviour
             characterProgress.Add(profile, 0); 
         }
     }
+    
+    public void StartGameFromMenu()
+    {
+        currentDay = 0; // Zera o contador para o StartNewDay somar +1 e virar Dia 1
+        StartNewDay();  // Sorteia o primeiro paciente e abre a clínica!
+    }
 
     public void StartNewDay()
     {
