@@ -202,28 +202,21 @@ public class DialogueManager : MonoBehaviour
                                     (CurrencyManager.instance.chips >= currentNode.chipsCost);
             }
 
-            // 2. SE TEM DINHEIRO (O código que você mandou)
             if (hasEnoughCurrency)
             {
-                // Configura o caminho True para quando o minigame acabar
+                // ATENÇÃO: Nós NÃO descontamos o dinheiro aqui! 
+                // Deixamos para o MiniGameManager cobrar lá no final na tela de FinalScore.
+
                 currentNode.NextNodeID = currentNode.NextNodeID_True;
 
                 dialoguePanel.SetActive(false);
-                
-                // Para a digitação do texto para não bugar no fundo
                 if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-                
-                // Força o SoundManager a calar a boca do áudio na mesma hora!
-                if (SoundManager.instance != null) SoundManager.instance.FadeOutSFX(0.2f);
 
-                // Abre o minigame
                 if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
                 return; 
             }
-            // 3. SE NÃO TEM DINHEIRO
             else
             {
-                // Pula para o caminho False (ex: "Você não tem dinheiro suficiente!")
                 if (!string.IsNullOrEmpty(currentNode.NextNodeID_False)) ShowNode(currentNode.NextNodeID_False);
                 else EndDialogue();
                 
@@ -292,7 +285,7 @@ public class DialogueManager : MonoBehaviour
                     // Também formata os textos dos botões de escolha, caso você queira usar as tags lá!
                     buttonText.text = FormatDialogueText(choice.ChoiceText);
 
-                    if (choice.ChoiceText == "Spy chip") 
+                    if (choice.ChoiceText == "Yes") 
                     {
                         if (ImpostorManager.instance != null && ImpostorManager.instance.HasUsedChip)
                         {

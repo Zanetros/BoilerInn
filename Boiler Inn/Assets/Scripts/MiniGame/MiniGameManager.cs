@@ -17,9 +17,6 @@ public class MiniGameManager : MonoBehaviour
     public TextMeshProUGUI cyberCostText;
     public TextMeshProUGUI implantsCostText;
     public TextMeshProUGUI chipsCostText;
-    
-    [Header("Minigame Settings")]
-    public float currentNoteSpeed = 5f;
 
     [Serializable]
     public struct MinigameEntry

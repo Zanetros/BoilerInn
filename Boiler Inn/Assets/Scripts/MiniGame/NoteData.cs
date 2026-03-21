@@ -2,40 +2,25 @@ using UnityEngine;
 
 public class NoteData : MonoBehaviour
 {
+    public float speed;
     public Vector3 direction;
     public string color;
-    
-    private HitBar hitBarReference; 
-    
-    // Variável local para guardar a velocidade
-    private float mySpeed = 5f; 
 
     void Start()
     {
-        hitBarReference = Object.FindFirstObjectByType<HitBar>();
-        
-        // CACHING: Pergunta a velocidade pro Manager APENAS UMA VEZ no nascimento!
-        if (MiniGameManager.instance != null)
-        {
-            mySpeed = MiniGameManager.instance.currentNoteSpeed;
-        }
+        // Faz o objeto ser destruído automaticamente após 5 segundos
+        Destroy(gameObject, 5f);
     }
 
     void Update()
     {
-        // O Update agora faz apenas matemática básica, zero peso para a CPU!
-        transform.Translate(direction * mySpeed * Time.deltaTime);
+        transform.Translate(direction * speed * Time.deltaTime);
     }
 
-    private void OnTriggerEnter2D(Collider2D other) 
+    private void OnTriggerEnter2D(Collider2D other) // Ajustado para 2D, já que os scripts anteriores eram 2D
     {
         if (other.CompareTag("Out"))
         {
-            if (hitBarReference != null)
-            {
-                hitBarReference.RegisterMissedNote(this);
-            }
-            
             Destroy(gameObject);
         }
     }
