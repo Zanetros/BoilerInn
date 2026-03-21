@@ -74,7 +74,7 @@ MonoBehaviour:
           serializedVersion: 2
           x: 884
           y: 281
-          width: 6756
+          width: 6757
           height: 360
         m_GraphElementMetaData:
         - m_Guid:
@@ -430,11 +430,11 @@ MonoBehaviour:
     - rid: 2385519549132832910
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 51d1846a857be3c40b78ed8117b84e80, type: 2}
     - rid: 2385519549132832911
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: fala truta
+        m_Value: faldddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddtrutaddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
     - rid: 2385519549132832912
       type: {class: DialogueNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
@@ -553,11 +553,11 @@ MonoBehaviour:
     - rid: 2385519549132832917
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132832918
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: que que ce quer?
+        m_Value: que que ce quer? cara, vai pegar essa impostor ou nao?
     - rid: 2385519549132832919
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -610,7 +610,7 @@ MonoBehaviour:
     - rid: 2385519549132832963
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132832964
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -657,7 +657,7 @@ MonoBehaviour:
     - rid: 2385519549132832981
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: 4bca249eef44c4d4da4a698c442fac94, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132832982
       type: {class: ImpostorNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
@@ -744,7 +744,7 @@ MonoBehaviour:
     - rid: 2385519549132832996
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132832997
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -863,7 +863,7 @@ MonoBehaviour:
     - rid: 2385519549132833004
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132833005
       type: {class: ImpostorNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
@@ -940,7 +940,7 @@ MonoBehaviour:
     - rid: 2385519549132833008
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132833009
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1053,7 +1053,7 @@ MonoBehaviour:
     - rid: 2385519549132833014
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132833015
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1144,7 +1144,7 @@ MonoBehaviour:
     - rid: 2385519549132833020
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132833021
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1231,7 +1231,7 @@ MonoBehaviour:
     - rid: 2385519549132833027
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: 4bca249eef44c4d4da4a698c442fac94, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519549132833028
       type: {class: ImpostorNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
@@ -1319,7 +1319,7 @@ MonoBehaviour:
     - rid: 2385519572159561800
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519572159561801
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1464,7 +1464,7 @@ MonoBehaviour:
     - rid: 2385519572159561807
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519572159561808
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
@@ -1513,7 +1513,7 @@ MonoBehaviour:
     - rid: 2385519572159561814
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: aa1fa884e8664724a8a0869316152fe9, type: 2}
+        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     - rid: 2385519572159561815
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:

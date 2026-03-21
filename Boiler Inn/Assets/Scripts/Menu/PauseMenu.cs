@@ -11,7 +11,12 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pauseMenuPanel;
     [SerializeField] private GameObject optionsMenuPanel;
 
-    public bool IsGamePaused { get; private set; }
+    public static bool IsGamePaused { get; private set; }
+
+    private void Awake()
+    {
+        IsGamePaused = false; 
+    }
 
     private void OnEnable()
     {

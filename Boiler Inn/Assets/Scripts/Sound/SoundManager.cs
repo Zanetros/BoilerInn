@@ -53,6 +53,31 @@ public class SoundManager : MonoBehaviour
     {
         sfxSource.PlayOneShot(clip);
     }
+    
+    public void FadeOutSFX(float duration = 0.2f)
+    {
+        if (sfxSource.isPlaying)
+        {
+            StartCoroutine(DoFadeOutSFX(duration));
+        }
+    }
+
+    private IEnumerator DoFadeOutSFX(float duration)
+    {
+        float startVolume = sfxSource.volume;
+        float timer = 0f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            // Abaixa o volume aos poucos
+            sfxSource.volume = Mathf.Lerp(startVolume, 0f, timer / duration);
+            yield return null;
+        }
+
+        sfxSource.Stop();
+        sfxSource.volume = startVolume; // Reseta o volume para o próximo som do jogo!
+    }
 
     private IEnumerator FadeMusic(AudioClip newClip)
     {
