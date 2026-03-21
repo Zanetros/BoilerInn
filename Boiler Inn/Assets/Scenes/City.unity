@@ -1412,7 +1412,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 424608073}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1940844413}
+        m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
+        m_MethodName: SwitchDialogue
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 3965311268370046156, guid: 4eae283efa53453478ef34584e4a19e3, type: 3}
+          m_ObjectArgumentAssemblyTypeName: RuntimeDialogueGraph, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &424608073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1532,7 +1544,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 504860499}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1940844413}
+        m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
+        m_MethodName: SwitchDialogue
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 3965311268370046156, guid: 125b4257377a8de48a85819b7065ee40, type: 3}
+          m_ObjectArgumentAssemblyTypeName: RuntimeDialogueGraph, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &504860499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2515,7 +2539,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 836334083}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1940844413}
+        m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
+        m_MethodName: SwitchDialogue
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 3965311268370046156, guid: 7113dff75204cba45a777702a0d421e5, type: 3}
+          m_ObjectArgumentAssemblyTypeName: RuntimeDialogueGraph, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &836334083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2686,7 +2722,7 @@ MonoBehaviour:
         m_MethodName: SwitchDialogue
         m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 3965311268370046156, guid: e4afabd36b5dc9d4497ee79ed9f7ec34, type: 3}
+          m_ObjectArgument: {fileID: 3965311268370046156, guid: 1e77405c0b8080845aad4ab4884b5ac7, type: 3}
           m_ObjectArgumentAssemblyTypeName: RuntimeDialogueGraph, Assembly-CSharp
           m_IntArgument: 0
           m_FloatArgument: 0
@@ -4237,7 +4273,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1327732851}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1940844413}
+        m_TargetAssemblyTypeName: DialogueManager, Assembly-CSharp
+        m_MethodName: SwitchDialogue
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 3965311268370046156, guid: 3f3d84bc9592b3247bfd7fdb87f07c4e, type: 3}
+          m_ObjectArgumentAssemblyTypeName: RuntimeDialogueGraph, Assembly-CSharp
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1327732851
 MonoBehaviour:
   m_ObjectHideFlags: 0

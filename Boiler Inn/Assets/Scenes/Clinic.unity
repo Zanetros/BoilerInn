@@ -6781,6 +6781,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa9adb320b89b6b4d8c99ac85d6ef656, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClinicManager
+  tutorialGraph: {fileID: 3965311268370046156, guid: 540f7615b1741534293991ce435cace4, type: 3}
   characterStories:
   - profile: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
     stage0Graph: {fileID: 3965311268370046156, guid: afa6289cf513ba742a6a0be90b933be0, type: 3}

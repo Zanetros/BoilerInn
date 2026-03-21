@@ -51,6 +51,16 @@ public class DayManager : MonoBehaviour
     {
         currentDay++;
 
+        // --- DIA 1: TUTORIAL ---
+        if (currentDay == 1)
+        {
+            Debug.Log("Day 1 started! Loading Tutorial.");
+            todayVisitor = null; // Não sorteia ninguém!
+            LoadDayScene();      // Chama a sua função com o nome correto!
+            return;              // Interrompe a função aqui para não rodar a roleta
+        }
+
+        // --- DIA 2 EM DIANTE: A ROLETA FUNCIONA NORMALMENTE ---
         if (availableCharacters.Count == 0)
         {
             TriggerFinalScene();
@@ -62,7 +72,7 @@ public class DayManager : MonoBehaviour
 
         Debug.Log($"Day {currentDay} started! Visitor: {todayVisitor.characterName} (Stage {characterProgress[todayVisitor]})");
 
-        LoadDayScene();
+        LoadDayScene(); // Chama a sua função com o nome correto!
     }
 
     public void AdvanceCharacterStory(CharacterProfile profile)
