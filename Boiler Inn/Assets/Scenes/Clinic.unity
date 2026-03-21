@@ -1626,7 +1626,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -2047,7 +2047,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RhythmMinigameController
   spawner: {fileID: 753405394}
   hitBar: {fileID: 23120290}
-  noteSpeed: 5
 --- !u!114 &753405394
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2070,6 +2069,7 @@ MonoBehaviour:
   - {fileID: 5997572599787505829, guid: ccd7867e95ca0d447bb8a21d2dae5ac5, type: 3}
   spawnInterval: 1
   maxSpawns: 10
+  noteSpeed: 5
 --- !u!4 &753405395
 Transform:
   m_ObjectHideFlags: 0
@@ -4567,7 +4567,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RhythmMinigameController
   spawner: {fileID: 1491495121}
   hitBar: {fileID: 1777236254}
-  noteSpeed: 5
 --- !u!114 &1491495121
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4590,6 +4589,7 @@ MonoBehaviour:
   - {fileID: 5997572599787505829, guid: ccd7867e95ca0d447bb8a21d2dae5ac5, type: 3}
   spawnInterval: 1
   maxSpawns: 10
+  noteSpeed: 5
 --- !u!4 &1491495122
 Transform:
   m_ObjectHideFlags: 0
@@ -6886,6 +6886,7 @@ MonoBehaviour:
   - {fileID: 5997572599787505829, guid: ccd7867e95ca0d447bb8a21d2dae5ac5, type: 3}
   spawnInterval: 1
   maxSpawns: 10
+  noteSpeed: 5
 --- !u!114 &1851500484
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6900,7 +6901,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::RhythmMinigameController
   spawner: {fileID: 1851500483}
   hitBar: {fileID: 1515738912}
-  noteSpeed: 5
 --- !u!1 &1898688895
 GameObject:
   m_ObjectHideFlags: 0
