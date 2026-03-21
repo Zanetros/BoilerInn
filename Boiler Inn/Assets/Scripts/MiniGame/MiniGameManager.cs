@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro; // <-- Obrigatório para manipular os textos da UI
 
 public class MiniGameManager : MonoBehaviour
 {
@@ -10,6 +11,12 @@ public class MiniGameManager : MonoBehaviour
     public GameObject dialogueUI;
     public GameObject finalScoreUI;
     public DialogueManager dialogueManager;
+
+    [Header("Results UI Texts")]
+    public TextMeshProUGUI resultTitleText; // Ex: "Success!" ou "Failed"
+    public TextMeshProUGUI cyberCostText;
+    public TextMeshProUGUI implantsCostText;
+    public TextMeshProUGUI chipsCostText;
 
     [Serializable]
     public struct MinigameEntry
@@ -27,7 +34,7 @@ public class MiniGameManager : MonoBehaviour
     private bool isGameActive = false;
     
     public int currentScore = 0; 
-    public int currentMisses = 0; // NOVA VARIÁVEL: Guarda os erros para a cobrança final
+    public int currentMisses = 0; 
 
     private void Awake()
     {
@@ -48,7 +55,6 @@ public class MiniGameManager : MonoBehaviour
         if (dialogueManager == null || dialogueManager.currentNode == null) return;
         RunTimeDialogueNode nodeData = dialogueManager.currentNode;
 
-        // Verifica se tem o dinheiro base (sem multa) para poder entrar
         if (CheckRequirements(nodeData.cyberCost, nodeData.implantsCost, nodeData.chipsCost))
         {
             if (minigameDictionary.TryGetValue(eventID, out activeMinigameContainer))
@@ -57,7 +63,7 @@ public class MiniGameManager : MonoBehaviour
                 dialogueUI.SetActive(false);
                 isGameActive = true;
                 currentScore = 0; 
-                currentMisses = 0; // Reseta erros ao iniciar
+                currentMisses = 0; 
                 
                 Debug.Log($"Requirements met. Starting minigame: {eventID}");
             }
@@ -83,10 +89,9 @@ public class MiniGameManager : MonoBehaviour
                CurrencyManager.instance.chips >= reqChips;
     }
 
-    // ATUALIZADO: Agora recebe também a quantidade de erros (misses)
     public void CalculateScore(int hits, int misses, int totalGoals)
     {
-        currentMisses = misses; // Guarda os erros para usar no pagamento
+        currentMisses = misses; 
 
         float accuracy = (float)hits / totalGoals;
 
@@ -102,6 +107,11 @@ public class MiniGameManager : MonoBehaviour
     public void FinalScore()
     {
         if (!isGameActive) return;
+        
+        // Faz a matemática e atualiza os textos (incluindo o título novo)
+        ProcessPaymentAndUpdateUI();
+
+        // Agora sim mostra o painel para o jogador ver o estrago
         finalScoreUI.SetActive(true);
     }
 
@@ -109,9 +119,6 @@ public class MiniGameManager : MonoBehaviour
     {
         isGameActive = false;
         finalScoreUI.SetActive(false);
-
-        // Processa o pagamento e possíveis multas antes de fechar o jogo
-        ProcessPayment();
 
         if (activeMinigameContainer != null)
         {
@@ -124,8 +131,7 @@ public class MiniGameManager : MonoBehaviour
         if (dialogueManager != null) dialogueManager.ResumeDialogueAfterEvent();
     }
 
-    // NOVO MÉTODO: Faz a cobrança real baseado no desempenho
-   private void ProcessPayment()
+    private void ProcessPaymentAndUpdateUI()
     {
         if (dialogueManager == null || dialogueManager.currentNode == null) return;
         
@@ -134,14 +140,24 @@ public class MiniGameManager : MonoBehaviour
         
         if (wallet != null)
         {
-            // Pega os custos base
             int finalCyber = nodeData.cyberCost;
             int finalImplants = nodeData.implantsCost;
             int finalChips = nodeData.chipsCost;
 
             bool isPenalized = currentMisses >= 5;
+            
+            if (resultTitleText != null)
+            {
+                if (isPenalized)
+                {
+                    resultTitleText.text = "Failed!"; // Texto de falha
+                }
+                else
+                {
+                    resultTitleText.text = "Success!"; // Texto de sucesso
+                }
+            }
 
-            // MULTA DE 20%: Garante que a multa seja de no mínimo +1 (se o custo não for zero)
             if (isPenalized)
             {
                 if (finalCyber > 0) finalCyber += Mathf.Max(1, Mathf.RoundToInt(finalCyber * 0.2f));
@@ -149,30 +165,37 @@ public class MiniGameManager : MonoBehaviour
                 if (finalChips > 0) finalChips += Mathf.Max(1, Mathf.RoundToInt(finalChips * 0.2f));
             }
 
-            // Subtrai do CurrencyManager
             wallet.cybercurrency -= finalCyber;
             wallet.implants -= finalImplants;
             wallet.chips -= finalChips;
 
-            // --- TRAVA DE SEGURANÇA (SALDO NEGATIVO) ---
             if (wallet.cybercurrency < 0) wallet.cybercurrency = 0;
             if (wallet.implants < 0) wallet.implants = 0;
             if (wallet.chips < 0) wallet.chips = 0;
-            // -------------------------------------------
 
-            // Força a UI a atualizar com os valores já corrigidos
             wallet.AddCybercurrency(0);
             wallet.AddImplants(0);
             wallet.AddChips(0);
 
-            if (isPenalized)
-            {
-                Debug.LogWarning($"PENA APLICADA! Erros: {currentMisses}. Custo final (+20% ou min +1): Cyber({finalCyber}) Implants({finalImplants}) Chips({finalChips})");
-            }
-            else
-            {
-                Debug.Log($"Pagamento normal. Custo final: Cyber({finalCyber}) Implants({finalImplants}) Chips({finalChips})");
-            }
+            UpdateCurrencyText(cyberCostText, finalCyber, "Cyber");
+            UpdateCurrencyText(implantsCostText, finalImplants, "Implants");
+            UpdateCurrencyText(chipsCostText, finalChips, "Chips");
+        }
+    }
+
+    private void UpdateCurrencyText(TextMeshProUGUI uiText, int finalCost, string currencyName)
+    {
+        if (uiText == null) return;
+
+        if (finalCost > 0)
+        {
+            uiText.text = $"- {finalCost} {currencyName}";
+            uiText.color = Color.red; 
+        }
+        else
+        {
+            uiText.text = $"0 {currencyName}";
+            uiText.color = Color.green; 
         }
     }
 }
