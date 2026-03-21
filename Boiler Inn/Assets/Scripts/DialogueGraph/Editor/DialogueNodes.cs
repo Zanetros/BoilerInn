@@ -138,3 +138,16 @@ public class GoToCityNode : Node
         context.AddInputPort("in").Build();
     }
 }
+
+[Serializable]
+public class AdvanceStoryNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+        context.AddOutputPort("out").Build();
+        
+        // Agora pede o Scriptable Object em vez do número
+        context.AddInputPort<CharacterProfile>("Character Profile").Build();
+    }
+}

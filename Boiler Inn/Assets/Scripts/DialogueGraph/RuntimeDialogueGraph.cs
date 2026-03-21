@@ -36,6 +36,9 @@ public class RunTimeDialogueNode
     public string conditionID;
     public string NextNodeID_True; 
     public string NextNodeID_False;
+    
+    public bool isAdvanceStoryNode;
+    public CharacterProfile advanceCharacterProfile;
 }
 
 [Serializable]
