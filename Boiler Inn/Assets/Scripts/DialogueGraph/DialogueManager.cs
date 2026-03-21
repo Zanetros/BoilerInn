@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class DialogueManager : MonoBehaviour
     public Image characterSprite;
     
     [Header("Choice Button UI")]
-    public Button choiceButtonPrefab; // Voltamos para o Button padrão da Unity!
+    public Button choiceButtonPrefab; 
     public Transform choiceButtonContainer;
     
     [Header("Text Settings")]
@@ -37,6 +38,11 @@ public class DialogueManager : MonoBehaviour
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
     public RunTimeDialogueNode currentNode { get; private set; }
 
+    // Variáveis de memória para as tags de diálogo
+    private int lastReceivedCyber = 0;
+    private int lastReceivedImplants = 0;
+    private int lastReceivedChips = 0;
+
     private void Awake()
     {
         typingDelay = new WaitForSeconds(typingSpeed);
@@ -49,13 +55,19 @@ public class DialogueManager : MonoBehaviour
             nodeLookup[node.NodeID] = node;
         }
 
-        if (!string.IsNullOrEmpty(runtimeGraph.EntryNodeID)) ShowNode(runtimeGraph.EntryNodeID);
-        else EndDialogue();
+        if (SceneManager.GetActiveScene().name == "City")
+        {
+            EndDialogue();
+        }
+        else
+        {
+            if (!string.IsNullOrEmpty(runtimeGraph.EntryNodeID)) ShowNode(runtimeGraph.EntryNodeID);
+            else EndDialogue();
+        }
     }
 
     public void Update()
     {
-        // Trava do Pause no clique geral do mouse
         if (PauseMenu.IsGamePaused) return;
         
         if (dialoguePanel.activeSelf && Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
@@ -75,13 +87,11 @@ public class DialogueManager : MonoBehaviour
     
         currentNode = node;
 
-        // --- NÓ DE HOTEL: Check-in Automático e Invisível ---
         if (currentNode.isHotelNode && HotelManager.instance != null)
         {
             HotelManager.instance.AddGuest(currentNode.guestID);
         }
 
-        // --- NÓ DO IMPOSTOR: Checagem Automática e Invisível ---
         if (currentNode.isImpostorNode)
         {
             if (ImpostorManager.instance != null && currentNode.speakerProfile != null)
@@ -102,7 +112,6 @@ public class DialogueManager : MonoBehaviour
             return; 
         }
 
-        // --- NÓ DE CONDIÇÃO (Bifurcação Invisível) ---
         if (currentNode.isConditionNode)
         {
             bool conditionMet = false;
@@ -120,7 +129,31 @@ public class DialogueManager : MonoBehaviour
             return; 
         }
 
-        // --- NÓ DE EVENTO: Minigame ---
+        // --- NÓ DE RECEBER RECOMPENSA (Invisível) ---
+        if (currentNode.isReceiveNode)
+        {
+            // Salva os valores na memória para o tradutor de texto usar depois
+            lastReceivedCyber = currentNode.cyberCost;
+            lastReceivedImplants = currentNode.implantsCost;
+            lastReceivedChips = currentNode.chipsCost;
+
+            if (CurrencyManager.instance != null)
+            {
+                CurrencyManager.instance.cybercurrency += currentNode.cyberCost;
+                CurrencyManager.instance.implants += currentNode.implantsCost;
+                CurrencyManager.instance.chips += currentNode.chipsCost;
+
+                CurrencyManager.instance.AddCybercurrency(0);
+                CurrencyManager.instance.AddImplants(0);
+                CurrencyManager.instance.AddChips(0);
+            }
+
+            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
+            else EndDialogue();
+            
+            return; 
+        }
+
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
             dialoguePanel.SetActive(false);
@@ -135,22 +168,32 @@ public class DialogueManager : MonoBehaviour
         if (currentNode.speakerProfile != null)
         {
             speakerNameText.SetText(currentNode.speakerProfile.characterName);
+            
             if (currentNode.speakerProfile.characterSprite != null)
             {
+                characterSprite.gameObject.SetActive(true);
                 characterSprite.sprite = currentNode.speakerProfile.characterSprite;
                 characterSprite.SetNativeSize();
+            }
+            else
+            {
+                characterSprite.gameObject.SetActive(false);
             }
         }
         else
         {
             speakerNameText.SetText("???");
+            characterSprite.gameObject.SetActive(false);
         }
     
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         
-        if (SoundManager.instance != null && !string.IsNullOrEmpty(currentNode.DialogueText))
+        // Passa o texto do editor pelo tradutor de Tags
+        string processedText = FormatDialogueText(currentNode.DialogueText);
+        
+        if (SoundManager.instance != null && !string.IsNullOrEmpty(processedText))
         {
-            int textLength = currentNode.DialogueText.Length;
+            int textLength = processedText.Length;
             AudioClip soundToPlay = null;
 
             if (textLength <= shortTextLimit) soundToPlay = shortTypingSound;
@@ -160,7 +203,8 @@ public class DialogueManager : MonoBehaviour
             if (soundToPlay != null) SoundManager.instance.PlaySFX(soundToPlay);
         }
         
-        typingCoroutine = StartCoroutine(TypeText(currentNode.DialogueText));
+        // Digita o texto formatado com os números reais
+        typingCoroutine = StartCoroutine(TypeText(processedText));
         
         RefreshChoices();
     }
@@ -173,12 +217,12 @@ public class DialogueManager : MonoBehaviour
         {
             foreach (var choice in currentNode.Choices)
             {
-                // Voltamos para a sua lógica original do GetComponent!
                 Button button = Instantiate(choiceButtonPrefab, choiceButtonContainer);
                 
                 if (button.GetComponentInChildren<TextMeshProUGUI>() is TextMeshProUGUI buttonText)
                 {
-                    buttonText.text = choice.ChoiceText;
+                    // Também formata os textos dos botões de escolha, caso você queira usar as tags lá!
+                    buttonText.text = FormatDialogueText(choice.ChoiceText);
 
                     if (choice.ChoiceText == "Yes") 
                     {
@@ -211,7 +255,6 @@ public class DialogueManager : MonoBehaviour
         currentNode = null;
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         
-        // Mantive a limpeza de botões aqui para a memória não estourar!
         foreach (Transform child in choiceButtonContainer) 
         {
             Destroy(child.gameObject);
@@ -230,6 +273,40 @@ public class DialogueManager : MonoBehaviour
         else EndDialogue();
     }
     
+    public void SwitchDialogue(RuntimeDialogueGraph newGraph)
+    {
+        if (newGraph == null) return;
+
+        runtimeGraph = newGraph;
+        nodeLookup.Clear();
+
+        foreach (var node in runtimeGraph.AllNodes)
+        {
+            nodeLookup[node.NodeID] = node;
+        }
+
+        if (!string.IsNullOrEmpty(runtimeGraph.EntryNodeID)) ShowNode(runtimeGraph.EntryNodeID);
+        else EndDialogue();
+    }
+    
+    private string FormatDialogueText(string rawText)
+    {
+        if (string.IsNullOrEmpty(rawText)) return rawText;
+
+        string formattedText = rawText;
+        
+        formattedText = formattedText.Replace("{Cyber}", lastReceivedCyber.ToString());
+        formattedText = formattedText.Replace("{Implants}", lastReceivedImplants.ToString());
+        formattedText = formattedText.Replace("{Chips}", lastReceivedChips.ToString());
+
+        if (CurrencyManager.instance != null)
+        {
+            formattedText = formattedText.Replace("{TotalCyber}", CurrencyManager.instance.cybercurrency.ToString());
+        }
+
+        return formattedText;
+    }
+
     private IEnumerator TypeText(string text)
     {
         dialogueText.text = text;

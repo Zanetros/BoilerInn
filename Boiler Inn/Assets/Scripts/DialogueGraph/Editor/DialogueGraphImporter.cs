@@ -35,6 +35,7 @@ public class DialogueGraphImporter : ScriptedImporter
             else if (iNode is HotelNode hotelNode) ProcessHotelNode(hotelNode, runtimeNode, nodeIDMap);
             else if (iNode is ImpostorNode impostorNode) ProcessImpostorNode(impostorNode, runtimeNode, nodeIDMap);
             else if (iNode is ConditionNode conditionNode) ProcessConditionNode(conditionNode, runtimeNode, nodeIDMap);
+            else if (iNode is ReceiveNode receiveNode) ProcessReceiveNode(receiveNode, runtimeNode, nodeIDMap);
             
             runtimeGraph.AllNodes.Add(runtimeNode);
         }
@@ -120,6 +121,19 @@ public class DialogueGraphImporter : ScriptedImporter
 
         var falsePort = node.GetOutputPortByName("False")?.firstConnectedPort;
         if (falsePort != null) runtimeNode.NextNodeID_False = nodeIDMap[falsePort.GetNode()];
+    }
+    
+    private void ProcessReceiveNode(ReceiveNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        runtimeNode.isReceiveNode = true;
+        
+        // Reutilizando as variáveis de custo para guardar o valor da recompensa!
+        runtimeNode.cyberCost = GetPortValue<int>(node.GetInputPortByName("CyberReward"));
+        runtimeNode.implantsCost = GetPortValue<int>(node.GetInputPortByName("ImplantsReward"));
+        runtimeNode.chipsCost = GetPortValue<int>(node.GetInputPortByName("ChipsReward"));
+
+        var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
+        if (nextNodePort != null) runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
     }
     
     private T GetPortValue<T>(IPort port)
