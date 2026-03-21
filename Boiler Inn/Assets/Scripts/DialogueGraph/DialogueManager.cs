@@ -13,21 +13,26 @@ public class DialogueManager : MonoBehaviour
     public GameObject dialoguePanel;
     public TextMeshProUGUI speakerNameText;
     public TextMeshProUGUI dialogueText;
-    //public Image portrait;
     public Image characterSprite;
     
     [Header("Choice Button UI")]
-    public Button choiceButtonPrefab;
+    public Button choiceButtonPrefab; // Voltamos para o Button padrão da Unity!
     public Transform choiceButtonContainer;
     
     [Header("Text Settings")]
     [SerializeField] private float typingSpeed = 0.05f;
     
     [Header("Audio Settings")]
-    public AudioClip typingSound;
+    public AudioClip shortTypingSound;   
+    public AudioClip mediumTypingSound;  
+    public AudioClip longTypingSound;    
+   
+    [Header("Text Length Thresholds")]
+    public int shortTextLimit = 20;  
+    public int mediumTextLimit = 60;
     
     private Coroutine typingCoroutine; 
-    private WaitForSeconds typingDelay; // CACHE: Evita criar lixo na memória toda letra
+    private WaitForSeconds typingDelay; 
     
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
     public RunTimeDialogueNode currentNode { get; private set; }
@@ -50,7 +55,9 @@ public class DialogueManager : MonoBehaviour
 
     public void Update()
     {
-        // Avança o diálogo com o clique do mouse se não houver escolhas na tela
+        // Trava do Pause no clique geral do mouse
+        if (PauseMenu.IsGamePaused) return;
+        
         if (dialoguePanel.activeSelf && Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
         {
             if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
@@ -79,26 +86,20 @@ public class DialogueManager : MonoBehaviour
         {
             if (ImpostorManager.instance != null && currentNode.speakerProfile != null)
             {
-                // Guarda o estado anterior para saber se estamos gastando o chip AGORA
                 bool hadUsedChipBefore = ImpostorManager.instance.HasUsedChip;
-                
-                // Manda o Manager agir (se o chip já foi usado, ele só dá um Debug.LogWarning)
                 ImpostorManager.instance.PlantChip(currentNode.speakerProfile);
 
-                // Se o NPC NÃO era o impostor e o jogador de fato gastou o chip agorinha...
                 if (!currentNode.speakerProfile.isImpostor && !hadUsedChipBefore)
                 {
-                    // Encerramos o diálogo na hora para o Game Over brilhar.
                     EndDialogue();
                     return; 
                 }
             }
 
-            // O nó invisível pula instantaneamente para a próxima fala!
             if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
             else EndDialogue();
             
-            return; // Retorna para impedir que o script tente desenhar a UI abaixo
+            return; 
         }
 
         // --- NÓ DE CONDIÇÃO (Bifurcação Invisível) ---
@@ -106,21 +107,17 @@ public class DialogueManager : MonoBehaviour
         {
             bool conditionMet = false;
 
-            // 1. O seu "Dicionário" de Condições:
             if (currentNode.conditionID == "ImpostorCaught")
             {
                 conditionMet = ImpostorManager.isImpostorCaught;
             }
-            // Adicione mais condições aqui no futuro se precisar!
 
-            // 2. Escolhe o caminho baseado no resultado (True ou False)
             string nextNode = conditionMet ? currentNode.NextNodeID_True : currentNode.NextNodeID_False;
 
-            // 3. Pula direto para a fala correta!
             if (!string.IsNullOrEmpty(nextNode)) ShowNode(nextNode);
             else EndDialogue();
             
-            return; // Retorna para impedir que o script tente desenhar a UI abaixo
+            return; 
         }
 
         // --- NÓ DE EVENTO: Minigame ---
@@ -135,13 +132,11 @@ public class DialogueManager : MonoBehaviour
 
         dialoguePanel.SetActive(true);
         
-        // Puxa as informações do CharacterProfile
         if (currentNode.speakerProfile != null)
         {
             speakerNameText.SetText(currentNode.speakerProfile.characterName);
             if (currentNode.speakerProfile.characterSprite != null)
             {
-                //portrait.sprite = currentNode.speakerProfile.characterSprite;
                 characterSprite.sprite = currentNode.speakerProfile.characterSprite;
                 characterSprite.SetNativeSize();
             }
@@ -153,9 +148,16 @@ public class DialogueManager : MonoBehaviour
     
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         
-        if (typingSound != null && SoundManager.instance != null)
+        if (SoundManager.instance != null && !string.IsNullOrEmpty(currentNode.DialogueText))
         {
-            SoundManager.instance.PlaySFX(typingSound);
+            int textLength = currentNode.DialogueText.Length;
+            AudioClip soundToPlay = null;
+
+            if (textLength <= shortTextLimit) soundToPlay = shortTypingSound;
+            else if (textLength <= mediumTextLimit) soundToPlay = mediumTypingSound;
+            else soundToPlay = longTypingSound;
+
+            if (soundToPlay != null) SoundManager.instance.PlaySFX(soundToPlay);
         }
         
         typingCoroutine = StartCoroutine(TypeText(currentNode.DialogueText));
@@ -165,41 +167,37 @@ public class DialogueManager : MonoBehaviour
 
     private void RefreshChoices()
     {
-        // Limpa os botões antigos
         foreach (Transform child in choiceButtonContainer) Destroy(child.gameObject);
 
-        // Se houver escolhas (ChoiceNode), cria os botões
         if (currentNode.Choices.Count > 0)
         {
             foreach (var choice in currentNode.Choices)
             {
+                // Voltamos para a sua lógica original do GetComponent!
                 Button button = Instantiate(choiceButtonPrefab, choiceButtonContainer);
+                
                 if (button.GetComponentInChildren<TextMeshProUGUI>() is TextMeshProUGUI buttonText)
                 {
                     buttonText.text = choice.ChoiceText;
 
-                    // --- TRAVA VISUAL DO CHIP ESPIÃO ---
-                    // IMPORTANTE: Coloque aqui EXATAMENTE o texto que você digita no seu Grafo!
                     if (choice.ChoiceText == "Yes") 
                     {
-                        // Checa no Manager se o chip já foi gasto em algum momento do jogo
                         if (ImpostorManager.instance != null && ImpostorManager.instance.HasUsedChip)
                         {
-                            button.interactable = false; // Desliga o botão (fica cinza e não clicável)
+                            button.interactable = false; 
                         }
                     }
-                    // -----------------------------------
                 }
 
                 button.onClick.AddListener(() =>
                 {
-                    // Lógica do Check-in do Hotel
-                    if (currentNode.isHotelNode && choice.ChoiceText == "Accept")
+                    if (PauseMenu.IsGamePaused) return;
+
+                    if (currentNode != null && currentNode.isHotelNode && choice.ChoiceText == "Accept")
                     {
                         if (HotelManager.instance != null) HotelManager.instance.AddGuest(currentNode.guestID);
                     }
 
-                    // Avança para o próximo nó
                     if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
                     else EndDialogue();
                 });
@@ -212,6 +210,17 @@ public class DialogueManager : MonoBehaviour
         dialoguePanel.SetActive(false);
         currentNode = null;
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+        
+        // Mantive a limpeza de botões aqui para a memória não estourar!
+        foreach (Transform child in choiceButtonContainer) 
+        {
+            Destroy(child.gameObject);
+        }
+        
+        if (SoundManager.instance != null)
+        {
+            SoundManager.instance.FadeOutSFX(0.2f);
+        }
     }
     
     public void ResumeDialogueAfterEvent()
@@ -232,6 +241,12 @@ public class DialogueManager : MonoBehaviour
             dialogueText.maxVisibleCharacters = i;
             yield return typingDelay; 
         }
+        
+        if (SoundManager.instance != null)
+        {
+            SoundManager.instance.FadeOutSFX(0.2f);
+        }
+        
         typingCoroutine = null;
     }
 }
