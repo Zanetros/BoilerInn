@@ -7280,7 +7280,7 @@ MonoBehaviour:
     minigameContainer: {fileID: 1851500481}
   - eventID: 2
     minigameContainer: {fileID: 753405392}
-  - eventID: 2
+  - eventID: 3
     minigameContainer: {fileID: 1491495119}
   currentScore: 0
   currentMisses: 0
