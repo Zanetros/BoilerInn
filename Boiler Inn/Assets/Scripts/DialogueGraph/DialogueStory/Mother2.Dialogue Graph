@@ -1210,7 +1210,7 @@ MonoBehaviour:
     - rid: 181753050011795614
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: 5ff5751f9d9bf0b40ae9275a131592f9, type: 2}
+        m_Value: {fileID: 11400000, guid: 22a3e03b4c432964c9b8284c2ac091fb, type: 2}
     - rid: 181753050011795615
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
