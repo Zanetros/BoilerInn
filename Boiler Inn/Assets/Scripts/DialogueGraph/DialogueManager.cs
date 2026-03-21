@@ -153,6 +153,23 @@ public class DialogueManager : MonoBehaviour
             
             return; 
         }
+        
+        if (currentNode.isGoToCityNode)
+        {
+            if (DayManager.instance != null)
+            {
+                // Chama o script imortal para trocar a cena
+                DayManager.instance.GoToCity();
+            }
+            else
+            {
+                Debug.LogWarning("DayManager não encontrado na cena!");
+            }
+
+            // Desliga a interface de diálogo atual
+            EndDialogue();
+            return; 
+        }
 
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {

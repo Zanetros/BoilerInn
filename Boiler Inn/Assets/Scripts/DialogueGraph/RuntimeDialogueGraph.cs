@@ -25,6 +25,7 @@ public class RunTimeDialogueNode
     public int implantsCost;
     public int chipsCost;
     public bool isReceiveNode;
+    public bool isGoToCityNode;
     
     public bool isHotelNode;
     public string guestID;

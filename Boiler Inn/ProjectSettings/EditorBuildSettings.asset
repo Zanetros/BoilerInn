@@ -11,6 +11,15 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/City.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: Assets/Scenes/Day1.unity
+    guid: 9dbe0a0e97256a44ebe30766c6bebfb2
+  - enabled: 1
+    path: Assets/Scenes/Day2.unity
+    guid: aceb337c3ad51a943bfa3de138fdb791
+  - enabled: 0
+    path: Assets/Scenes/Day3.unity
+    guid: b6c878a3aa31c884294102ec04a726e1
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 3ddd55b6857bc894ea563ef78834ffe1, type: 3}
   m_UseUCBPForAssetBundles: 0

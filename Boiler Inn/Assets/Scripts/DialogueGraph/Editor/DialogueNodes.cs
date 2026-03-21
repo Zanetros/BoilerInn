@@ -129,3 +129,12 @@ public class ReceiveNode : Node
         context.AddInputPort<int>("ChipsReward").WithDisplayName("Chips Reward").Build();
     }
 }
+
+[Serializable]
+public class GoToCityNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+    }
+}

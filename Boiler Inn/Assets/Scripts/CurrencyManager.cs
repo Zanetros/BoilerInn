@@ -1,59 +1,51 @@
 using UnityEngine;
-using TMPro;
 
 public class CurrencyManager : MonoBehaviour
 {
     public static CurrencyManager instance;
 
-    [Header("Saldos Atuais")]
-    public int cybercurrency;
-    public int implants;
-    public int chips;
-
-    //[Header("Referências de UI (Opcional)")]
-    //public TextMeshProUGUI cyberText;
-    //public TextMeshProUGUI implantsText;
-    //public TextMeshProUGUI chipsText;
+    [Header("Player Wallet")]
+    public int cybercurrency = 0;
+    public int implants = 0;
+    public int chips = 0;
 
     private void Awake()
     {
         if (instance == null)
         {
             instance = this;
-            DontDestroyOnLoad(gameObject); // A "Mágica" acontece aqui
+            DontDestroyOnLoad(gameObject);
         }
-        else
+        else if (instance != this)
         {
             Destroy(gameObject);
-            return;
         }
     }
-
-    private void Start()
+    
+    public void AddCybercurrency(int amount)
     {
+        cybercurrency += amount;
         UpdateUI();
     }
 
-    // Métodos para Adicionar Moedas
-    public void AddCybercurrency(int amount) { cybercurrency += amount; UpdateUI(); }
-    public void AddImplants(int amount) { implants += amount; UpdateUI(); }
-    public void AddChips(int amount) { chips += amount; UpdateUI(); }
-
-    // Métodos para Remover Moedas (Gastar)
-    public bool SpendCybercurrency(int amount)
+    public void AddImplants(int amount)
     {
-        if (cybercurrency >= amount) {
-            cybercurrency -= amount;
-            UpdateUI();
-            return true;
-        }
-        return false;
+        implants += amount;
+        UpdateUI();
     }
 
+    public void AddChips(int amount)
+    {
+        chips += amount;
+        UpdateUI();
+    }
+    
     private void UpdateUI()
     {
-        //if (cyberText != null) cyberText.text = cybercurrency.ToString();
-        //if (implantsText != null) implantsText.text = implants.ToString();
-        //if (chipsText != null) chipsText.text = chips.ToString();
+        // Avisa o UIManager da cena atual para atualizar os números na tela
+        if (UIManager.instance != null)
+        {
+            UIManager.instance.UpdateCurrencyTexts();
+        }
     }
 }
