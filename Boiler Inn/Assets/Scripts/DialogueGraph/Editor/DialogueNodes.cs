@@ -115,3 +115,17 @@ public class ConditionNode : Node
         context.AddOutputPort("False").WithDisplayName("If False").Build();
     }
 }
+
+[Serializable]
+public class ReceiveNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        context.AddInputPort("in").Build();
+        context.AddOutputPort("out").Build();
+        
+        context.AddInputPort<int>("CyberReward").WithDisplayName("Cybercurrency Reward").Build();
+        context.AddInputPort<int>("ImplantsReward").WithDisplayName("Implants Reward").Build();
+        context.AddInputPort<int>("ChipsReward").WithDisplayName("Chips Reward").Build();
+    }
+}

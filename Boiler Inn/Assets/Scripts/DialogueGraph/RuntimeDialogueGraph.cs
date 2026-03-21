@@ -24,6 +24,7 @@ public class RunTimeDialogueNode
     public int cyberCost;
     public int implantsCost;
     public int chipsCost;
+    public bool isReceiveNode;
     
     public bool isHotelNode;
     public string guestID;
