@@ -26,7 +26,10 @@ public class EventNode : Node
     protected override void OnDefinePorts(IPortDefinitionContext context)
     {
         context.AddInputPort("in").Build();
-        context.AddOutputPort("out").Build();
+        
+        context.AddOutputPort("True").WithDisplayName("If Enough Currency").Build();
+        context.AddOutputPort("False").WithDisplayName("Not Enough Currency").Build();
+        
         context.AddInputPort<string>("EventID").Build(); 
         context.AddInputPort<int>("CyberCost").WithDisplayName("Cybercurrency Cost").Build();
         context.AddInputPort<int>("ImplantsCost").WithDisplayName("Implants Cost").Build();

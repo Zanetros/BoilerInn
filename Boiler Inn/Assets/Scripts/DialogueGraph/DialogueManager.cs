@@ -134,7 +134,6 @@ public class DialogueManager : MonoBehaviour
             return; 
         }
 
-        // --- NÓ DE RECEBER RECOMPENSA (Invisível) ---
         if (currentNode.isReceiveNode)
         {
             // Salva os valores na memória para o tradutor de texto usar depois
@@ -190,13 +189,39 @@ public class DialogueManager : MonoBehaviour
             return; 
         }
 
+        // event node
         if (!string.IsNullOrEmpty(currentNode.EventID))
         {
-            dialoguePanel.SetActive(false);
-            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+            bool hasEnoughCurrency = false;
 
-            if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
-            return; 
+            // 1. Apenas CHECA a carteira para saber qual caminho da história seguir
+            if (CurrencyManager.instance != null)
+            {
+                hasEnoughCurrency = (CurrencyManager.instance.cybercurrency >= currentNode.cyberCost) &&
+                                    (CurrencyManager.instance.implants >= currentNode.implantsCost) &&
+                                    (CurrencyManager.instance.chips >= currentNode.chipsCost);
+            }
+
+            if (hasEnoughCurrency)
+            {
+                // ATENÇÃO: Nós NÃO descontamos o dinheiro aqui! 
+                // Deixamos para o MiniGameManager cobrar lá no final na tela de FinalScore.
+
+                currentNode.NextNodeID = currentNode.NextNodeID_True;
+
+                dialoguePanel.SetActive(false);
+                if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+
+                if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
+                return; 
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(currentNode.NextNodeID_False)) ShowNode(currentNode.NextNodeID_False);
+                else EndDialogue();
+                
+                return;
+            }
         }
 
         dialoguePanel.SetActive(true);

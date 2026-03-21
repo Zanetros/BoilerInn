@@ -4998,9 +4998,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b83fb66af8e89b468ef69fb70f95e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CurrencyManager
-  cybercurrency: 9
-  implants: 9
-  chips: 9
+  cybercurrency: 1
+  implants: 1
+  chips: 1
 --- !u!4 &1648593376
 Transform:
   m_ObjectHideFlags: 0
@@ -6727,7 +6727,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75c249055f2e5934eb2a44c87393b59c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueManager
-  runtimeGraph: {fileID: 3965311268370046156, guid: 4fb1c45efca68584a926d107369d50c0, type: 3}
+  runtimeGraph: {fileID: 3965311268370046156, guid: 1dc8f318c394fd242880a314c98fcb73, type: 3}
   dialoguePanel: {fileID: 1791153342}
   speakerNameText: {fileID: 1957276337}
   dialogueText: {fileID: 1211267687}

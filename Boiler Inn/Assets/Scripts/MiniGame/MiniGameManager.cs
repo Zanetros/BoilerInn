@@ -52,31 +52,21 @@ public class MiniGameManager : MonoBehaviour
     
     public void TriggerMinigame(string eventID)
     {
-        if (dialogueManager == null || dialogueManager.currentNode == null) return;
-        RunTimeDialogueNode nodeData = dialogueManager.currentNode;
-
-        if (CheckRequirements(nodeData.cyberCost, nodeData.implantsCost, nodeData.chipsCost))
+        // O DialogueManager já checou a carteira, então podemos só iniciar o jogo!
+        if (minigameDictionary.TryGetValue(eventID, out activeMinigameContainer))
         {
-            if (minigameDictionary.TryGetValue(eventID, out activeMinigameContainer))
-            {
-                activeMinigameContainer.SetActive(true); 
-                dialogueUI.SetActive(false);
-                isGameActive = true;
-                currentScore = 0; 
-                currentMisses = 0; 
-                
-                Debug.Log($"Requirements met. Starting minigame: {eventID}");
-            }
-            else
-            {
-                Debug.LogWarning($"Minigame with EventID '{eventID}' not found in dictionary!");
-                dialogueManager.ResumeDialogueAfterEvent();
-            }
+            activeMinigameContainer.SetActive(true); 
+            dialogueUI.SetActive(false);
+            isGameActive = true;
+            currentScore = 0; 
+            currentMisses = 0; 
+            
+            Debug.Log($"Starting minigame: {eventID}");
         }
         else
         {
-            Debug.LogWarning("Insufficient resources to start the minigame.");
-            dialogueManager.ResumeDialogueAfterEvent(); 
+            Debug.LogWarning($"Minigame with EventID '{eventID}' not found in dictionary!");
+            if (dialogueManager != null) dialogueManager.ResumeDialogueAfterEvent();
         }
     }
 
