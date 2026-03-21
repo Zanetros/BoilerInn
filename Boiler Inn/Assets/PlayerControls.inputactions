@@ -58,7 +58,7 @@
                 {
                     "name": "",
                     "id": "06e0d4a9-6d33-4fb3-bcf7-6965c6d697a8",
-                    "path": "<Keyboard>/upArrow",
+                    "path": "<Keyboard>/rightArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -80,7 +80,7 @@
                 {
                     "name": "",
                     "id": "753d92c9-4592-414e-a622-baa3cd83fbe9",
-                    "path": "<Keyboard>/rightArrow",
+                    "path": "<Keyboard>/upArrow",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

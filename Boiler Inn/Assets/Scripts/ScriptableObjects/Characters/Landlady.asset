@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: Landlady
   m_EditorClassIdentifier: Assembly-CSharp::CharacterProfile
   characterName: Landlady
-  characterSprite: {fileID: 0}
+  characterSprite: {fileID: -1381917355657237388, guid: f417fdf2820de3d4cb27eeb2a16198c5, type: 3}
   isImpostor: 0

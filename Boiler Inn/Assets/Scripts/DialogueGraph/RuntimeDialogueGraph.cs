@@ -39,6 +39,8 @@ public class RunTimeDialogueNode
     
     public bool isAdvanceStoryNode;
     public CharacterProfile advanceCharacterProfile;
+    
+    public bool isCreditsNode;
 }
 
 [Serializable]

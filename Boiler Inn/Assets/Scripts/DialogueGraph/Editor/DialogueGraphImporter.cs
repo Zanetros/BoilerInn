@@ -38,6 +38,7 @@ public class DialogueGraphImporter : ScriptedImporter
             else if (iNode is ReceiveNode receiveNode) ProcessReceiveNode(receiveNode, runtimeNode, nodeIDMap);
             else if (iNode is GoToCityNode cityNode) ProcessGoToCityNode(cityNode, runtimeNode, nodeIDMap);
             else if (iNode is AdvanceStoryNode advanceNode) ProcessAdvanceStoryNode(advanceNode, runtimeNode, nodeIDMap);
+            else if (iNode is CreditsNode creditsNode) ProcessCreditsNode(creditsNode, runtimeNode, nodeIDMap);
             
             runtimeGraph.AllNodes.Add(runtimeNode);
         }
@@ -154,6 +155,11 @@ public class DialogueGraphImporter : ScriptedImporter
 
         var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
         if (nextNodePort != null) runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
+    }
+    
+    private void ProcessCreditsNode(CreditsNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
+    {
+        runtimeNode.isCreditsNode = true;
     }
     
     private T GetPortValue<T>(IPort port)

@@ -154,3 +154,13 @@ public class AdvanceStoryNode : Node
         context.AddInputPort<CharacterProfile>("Character Profile").Build();
     }
 }
+
+[Serializable]
+public class CreditsNode : Node
+{
+    protected override void OnDefinePorts(IPortDefinitionContext context)
+    {
+        // Tem entrada, mas não tem saída, pois é o fim do jogo!
+        context.AddInputPort("in").Build();
+    }
+}

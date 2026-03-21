@@ -2739,6 +2739,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Button
       objectReference: {fileID: 0}
+    - target: {fileID: 5428302625315376738, guid: dc5080c9ca5a4a7469b5578e9e4be036, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+    - target: {fileID: 5428302625315376738, guid: dc5080c9ca5a4a7469b5578e9e4be036, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
     - target: {fileID: 6397788573022543492, guid: dc5080c9ca5a4a7469b5578e9e4be036, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -5466,6 +5474,7 @@ GameObject:
   - component: {fileID: 1940844413}
   - component: {fileID: 1940844414}
   - component: {fileID: 1940844415}
+  - component: {fileID: 1940844416}
   m_Layer: 0
   m_Name: Game Manager
   m_TagString: Untagged
@@ -5656,6 +5665,23 @@ MonoBehaviour:
   cyberText: {fileID: 1706898706}
   implantsText: {fileID: 228092526}
   chipsText: {fileID: 1963158208}
+--- !u!114 &1940844416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940844407}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2540f1108504cbf4a9501b0e7fbb7eaa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CreditsManager
+  creditsPanel: {fileID: 0}
+  creditsRectTransform: {fileID: 0}
+  creditsText: {fileID: 0}
+  scrollSpeed: 50
+  scrollDown: 0
 --- !u!1 &1952027885
 GameObject:
   m_ObjectHideFlags: 0

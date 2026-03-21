@@ -230,6 +230,23 @@ public class DialogueManager : MonoBehaviour
                 return;
             }
         }
+        
+        if (currentNode.isCreditsNode)
+        {
+            EndDialogue(); // Esconde a caixa de diálogo atual
+            
+            // Verifica se o painel de créditos está na mesma cena
+            if (CreditsManager.instance != null)
+            {
+                CreditsManager.instance.StartCredits();
+            }
+            else
+            {
+                // Se o CreditsManager não estiver na cena, presume-se que ele está na FinalScene, então carrega ela!
+                SceneManager.LoadScene("FinalScene");
+            }
+            return; 
+        }
 
         dialoguePanel.SetActive(true);
         
