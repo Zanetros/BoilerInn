@@ -83,4 +83,20 @@ public class HitBar : MonoBehaviour
             if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
         }
     }
+    
+    public void RegisterMissedNote(NoteData note)
+    {
+        misses++; 
+        
+        if (SoundManager.instance) SoundManager.instance.PlaySFX(missSound);
+        
+        // Medida de segurança: tira a nota da lista caso o jogador 
+        // tenha apertado o botão no exato frame em que ela foi destruída
+        if (notesInside.Contains(note))
+        {
+            notesInside.Remove(note);
+        }
+        
+        Debug.Log("Nota passou direto! Misses: " + misses);
+    }
 }
