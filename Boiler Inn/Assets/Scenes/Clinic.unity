@@ -6783,13 +6783,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ClinicManager
   characterStories:
   - profile: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
-    stage0Graph: {fileID: 3965311268370046156, guid: 4fb1c45efca68584a926d107369d50c0, type: 3}
-    stage1Graph: {fileID: 3965311268370046156, guid: 889f7b6a75d7cb14eb4114e8dbe4c6fa, type: 3}
-    stage2Graph: {fileID: 3965311268370046156, guid: f1995b4d3e6e8a049a0f9dcde270b3f1, type: 3}
+    stage0Graph: {fileID: 3965311268370046156, guid: afa6289cf513ba742a6a0be90b933be0, type: 3}
+    stage1Graph: {fileID: 3965311268370046156, guid: 6c5c3deeaaaef044e9145f7de2a93ce8, type: 3}
+    stage2Graph: {fileID: 3965311268370046156, guid: 058bfd540e4a7b24f8c393b3f220a366, type: 3}
   - profile: {fileID: 11400000, guid: 0504537459c06374ebedd3d50f9cf677, type: 2}
-    stage0Graph: {fileID: 3965311268370046156, guid: 0c586a5da4252204391c609430743b36, type: 3}
-    stage1Graph: {fileID: 3965311268370046156, guid: 1c635c18c9b667c4fb98f190691828f5, type: 3}
-    stage2Graph: {fileID: 3965311268370046156, guid: d52205d1c5f3c2248b8bb194ec2b3f2b, type: 3}
+    stage0Graph: {fileID: 3965311268370046156, guid: 76ed5328243ce63469ff2784509fc088, type: 3}
+    stage1Graph: {fileID: 3965311268370046156, guid: fe0dca71a66b66643bf6be54389edb3c, type: 3}
+    stage2Graph: {fileID: 3965311268370046156, guid: 775e26f4d4d588b459d6e8f2d5962424, type: 3}
 --- !u!1 &1952027885
 GameObject:
   m_ObjectHideFlags: 0

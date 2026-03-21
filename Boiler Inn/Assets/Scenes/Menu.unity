@@ -3563,7 +3563,7 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 1063523252}
         m_TargetAssemblyTypeName: DayManager, Assembly-CSharp
-        m_MethodName: StartNewDay
+        m_MethodName: StartGameFromMenu
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
