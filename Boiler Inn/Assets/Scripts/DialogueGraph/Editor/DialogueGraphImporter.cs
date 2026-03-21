@@ -73,8 +73,11 @@ public class DialogueGraphImporter : ScriptedImporter
         runtimeNode.implantsCost = GetPortValue<int>(node.GetInputPortByName("ImplantsCost"));
         runtimeNode.chipsCost = GetPortValue<int>(node.GetInputPortByName("ChipsCost"));
         
-        var nextNodePort = node.GetOutputPortByName("out")?.firstConnectedPort;
-        if (nextNodePort != null) runtimeNode.NextNodeID = nodeIDMap[nextNodePort.GetNode()];
+        var truePort = node.GetOutputPortByName("True")?.firstConnectedPort;
+        if (truePort != null) runtimeNode.NextNodeID_True = nodeIDMap[truePort.GetNode()];
+        
+        var falsePort = node.GetOutputPortByName("False")?.firstConnectedPort;
+        if (falsePort != null) runtimeNode.NextNodeID_False = nodeIDMap[falsePort.GetNode()];
     }
 
     private void ProcessChoiceNode(ChoiceNode node, RunTimeDialogueNode runtimeNode, Dictionary<INode, string> nodeIDMap)
