@@ -58,6 +58,7 @@ public class SoundManager : MonoBehaviour
     
     public void PlaySFX(AudioClip clip)
     {
+        sfxSource.volume = 1f;
         sfxSource.PlayOneShot(clip);
     }
     
@@ -93,8 +94,6 @@ public class SoundManager : MonoBehaviour
             
             while (musicSource.volume > 0)
             {
-                // ATENÇÃO: Mudamos Time.deltaTime para Time.unscaledDeltaTime
-                // Isso garante que o fade da música funcione mesmo se o jogo estiver pausado (Time.timeScale = 0)!
                 musicSource.volume -= startVolume * Time.unscaledDeltaTime / (fadeDuration / 2);
                 yield return null; 
             }

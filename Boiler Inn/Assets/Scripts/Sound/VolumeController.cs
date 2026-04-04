@@ -11,8 +11,6 @@ public class VolumeController : MonoBehaviour
 
     void Start()
     {
-        // Define o valor inicial dos Sliders (entre 0.0001 e 1)
-        // O valor padrão de 0.75 costuma ser um bom começo
         musicSlider.value = PlayerPrefs.GetFloat("MusicVol", 0.75f);
         sfxSlider.value = PlayerPrefs.GetFloat("SFXVol", 0.75f);
 

@@ -39,8 +39,7 @@ public class DialogueManager : MonoBehaviour
     
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
     public RunTimeDialogueNode currentNode { get; private set; }
-
-    // Variáveis de memória para as tags de diálogo
+    
     private int lastReceivedCyber = 0;
     private int lastReceivedImplants = 0;
     private int lastReceivedChips = 0;
@@ -136,7 +135,6 @@ public class DialogueManager : MonoBehaviour
 
         if (currentNode.isReceiveNode)
         {
-            // Salva os valores na memória para o tradutor de texto usar depois
             lastReceivedCyber = currentNode.cyberCost;
             lastReceivedImplants = currentNode.implantsCost;
             lastReceivedChips = currentNode.chipsCost;
@@ -162,7 +160,6 @@ public class DialogueManager : MonoBehaviour
         {
             if (DayManager.instance != null)
             {
-                // Passa o Scriptable Object diretamente
                 DayManager.instance.AdvanceCharacterStory(currentNode.advanceCharacterProfile);
             }
 
@@ -176,7 +173,6 @@ public class DialogueManager : MonoBehaviour
         {
             if (DayManager.instance != null)
             {
-                // Chama o script imortal para trocar a cena
                 DayManager.instance.GoToCity();
             }
             else
@@ -220,10 +216,8 @@ public class DialogueManager : MonoBehaviour
                 if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
                 return; 
             }
-            // 3. SE NÃO TEM DINHEIRO
             else
             {
-                // Pula para o caminho False (ex: "Você não tem dinheiro suficiente!")
                 if (!string.IsNullOrEmpty(currentNode.NextNodeID_False)) ShowNode(currentNode.NextNodeID_False);
                 else EndDialogue();
                 
