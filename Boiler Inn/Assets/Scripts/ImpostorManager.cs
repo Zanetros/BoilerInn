@@ -42,28 +42,6 @@ public class ImpostorManager : MonoBehaviour
         {
             Debug.LogWarning("ERRO CRÍTICO: Inocente grampeado.");
             isImpostorCaught = false;
-            TriggerGameOver();
         }
-    }
-    
-    private void TriggerGameOver()
-    {
-        if (gameOverPanel != null) 
-        {
-            gameOverPanel.SetActive(true);
-            isImpostorCaught = false;
-        }
-        else 
-        {
-            Debug.LogError("Painel de Game Over não foi referenciado no ImpostorManager!");
-        }
-        
-        Time.timeScale = 0f; 
-    }
-    
-    public void ReturnToMenu()
-    {
-        Time.timeScale = 1f; 
-        SceneManager.LoadScene(0); 
     }
 }

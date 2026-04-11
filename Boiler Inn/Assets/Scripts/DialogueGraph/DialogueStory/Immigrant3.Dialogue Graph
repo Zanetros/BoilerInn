@@ -83,10 +83,10 @@ MonoBehaviour:
         m_LocalSubgraphs: []
         m_LastKnownBounds:
           serializedVersion: 2
-          x: 407
-          y: -192
-          width: 6110
-          height: 767
+          x: 407.2
+          y: -191.20001
+          width: 6216
+          height: 764.8
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 1451181759591693487
@@ -561,7 +561,7 @@ MonoBehaviour:
     - rid: 181753025873576071
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
+        m_Value: {fileID: 11400000, guid: 0504537459c06374ebedd3d50f9cf677, type: 2}
     - rid: 181753025873576072
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
