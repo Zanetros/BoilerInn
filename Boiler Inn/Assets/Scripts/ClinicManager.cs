@@ -23,10 +23,8 @@ public class ClinicManager : MonoBehaviour
     private void Start()
     {
         if (DayManager.instance == null) return;
-
-        // ============================================
-        // 1. CHECAGEM DO TUTORIAL (DIA 1)
-        // ============================================
+        
+        //CHECAGEM DO TUTORIAL (DIA 1)
         if (DayManager.instance.currentDay == 1)
         {
             if (tutorialGraph != null && DialogueManager.instance != null)
@@ -39,12 +37,10 @@ public class ClinicManager : MonoBehaviour
                 Debug.LogError("Faltou arrastar o Grafo do Tutorial no ClinicManager!");
             }
             
-            return; // IMPORTANTE: Encerra o Start() aqui para não procurar paciente!
+            return;
         }
-
-        // ============================================
-        // 2. SISTEMA NORMAL DE ROLETA (DIA 2 EM DIANTE)
-        // ============================================
+        
+        //SISTEMA NORMAL DE ROLETA (DIA 2 EM DIANTE)
         CharacterProfile visitor = DayManager.instance.todayVisitor;
         if (visitor == null) return;
 

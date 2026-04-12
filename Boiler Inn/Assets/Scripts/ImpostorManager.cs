@@ -1,13 +1,13 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // Obrigatório para trocar de cena
+using UnityEngine.SceneManagement; 
 
 public class ImpostorManager : MonoBehaviour
 {
     public static ImpostorManager instance;
 
     [Header("Chip Tracker")]
-    public CharacterProfile chippedCharacter; 
-    public bool HasUsedChip => chippedCharacter != null;
+    // Consulta o DayManager para saber se o chip foi usado!
+    public bool HasUsedChip => DayManager.instance != null && DayManager.instance.chippedCharacter != null;
     
     public static bool isImpostorCaught = false; 
 
@@ -29,7 +29,12 @@ public class ImpostorManager : MonoBehaviour
     {
         if (HasUsedChip) return;
 
-        chippedCharacter = targetProfile;
+        // Salva permanentemente no DayManager!
+        if (DayManager.instance != null)
+        {
+            DayManager.instance.chippedCharacter = targetProfile;
+        }
+
         Debug.Log($"Chip plantado em: {targetProfile.characterName}");
 
         if (targetProfile.isImpostor)

@@ -82,9 +82,9 @@ MonoBehaviour:
         m_LastKnownBounds:
           serializedVersion: 2
           x: -16
-          y: 108
-          width: 6132
-          height: 419
+          y: 107.99999
+          width: 6132.8003
+          height: 418.40002
         m_GraphElementMetaData:
         - m_Guid:
             m_Value0: 3863087855057888353
@@ -2044,7 +2044,7 @@ MonoBehaviour:
     - rid: 181753061272190988
       type: {class: 'Constant`1[[CharacterProfile, Assembly-CSharp]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: {fileID: 0}
+        m_Value: {fileID: 11400000, guid: 38b2ba2bd03f2e94cb4902e096927f03, type: 2}
     - rid: 181753061272190989
       type: {class: AdvanceStoryNode, ns: , asm: Assembly-CSharp-Editor}
       data: 

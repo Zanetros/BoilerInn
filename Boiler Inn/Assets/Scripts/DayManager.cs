@@ -9,17 +9,13 @@ public class DayManager : MonoBehaviour
     [Header("Game State")]
     public int currentDay = 1;
 
-    [Header("Story Loop System")]
-    // A urna atual (que vai esvaziando durante o jogo)
-    public List<CharacterProfile> availableCharacters = new List<CharacterProfile>();
-    
-    // O backup da urna (intacto, para quando começar um Novo Jogo)
-    private List<CharacterProfile> originalCharacters = new List<CharacterProfile>();
-    
-    // O dicionário usa o próprio Perfil como chave para achar o estágio (0, 1, 2)
-    public Dictionary<CharacterProfile, int> characterProgress = new Dictionary<CharacterProfile, int>();
+    [Header("Impostor State")]
+    public CharacterProfile chippedCharacter = null;
 
-    // A variável que guarda quem é o paciente do dia
+    [Header("Story Loop System")]
+    public List<CharacterProfile> availableCharacters = new List<CharacterProfile>();
+    private List<CharacterProfile> originalCharacters = new List<CharacterProfile>();
+    public Dictionary<CharacterProfile, int> characterProgress = new Dictionary<CharacterProfile, int>();
     public CharacterProfile todayVisitor = null; 
 
     private void Awake()
@@ -29,9 +25,7 @@ public class DayManager : MonoBehaviour
             instance = this;
             DontDestroyOnLoad(gameObject);
             
-            // FAZ O BACKUP: Copia os personagens do Inspector antes de qualquer um ser apagado!
             originalCharacters = new List<CharacterProfile>(availableCharacters);
-            
             InitializeProgress();
         }
         else if (instance != this)
@@ -42,7 +36,6 @@ public class DayManager : MonoBehaviour
 
     private void InitializeProgress()
     {
-        // Limpa o dicionário antes de preencher para evitar duplicações
         characterProgress.Clear();
         foreach (CharacterProfile profile in availableCharacters)
         {
@@ -50,22 +43,13 @@ public class DayManager : MonoBehaviour
         }
     }
     
-    // ==========================================
-    // CHAMADO PELO BOTÃO "PLAY" NO MENU PRINCIPAL
-    // ==========================================
     public void StartGameFromMenu()
     {
-        // 1. Zera as variáveis globais
         currentDay = 0; 
         todayVisitor = null; 
-
-        // 2. Restaura a urna de sorteio puxando do nosso backup intacto
+        chippedCharacter = null; // Reseta o uso do chip ao iniciar um novo jogo
         availableCharacters = new List<CharacterProfile>(originalCharacters);
-        
-        // 3. Queima os prontuários antigos e cria novos, todos na Fase 0
-        InitializeProgress(); // Reaproveitamos a função aqui para ficar limpo!
-
-        // 4. Agora sim, começa um jogo 100% limpo!
+        InitializeProgress(); 
         StartNewDay();  
     }
 
@@ -73,16 +57,14 @@ public class DayManager : MonoBehaviour
     {
         currentDay++;
 
-        // --- DIA 1: TUTORIAL ---
         if (currentDay == 1)
         {
             Debug.Log("Day 1 started! Loading Tutorial.");
-            todayVisitor = null; // Não sorteia ninguém!
+            todayVisitor = null; 
             LoadDayScene();      
             return;              
         }
 
-        // --- DIA 2 EM DIANTE: A ROLETA FUNCIONA NORMALMENTE ---
         if (availableCharacters.Count == 0)
         {
             TriggerFinalScene();
@@ -96,17 +78,30 @@ public class DayManager : MonoBehaviour
 
         LoadDayScene(); 
     }
-
+    
     public void AdvanceCharacterStory(CharacterProfile profile)
     {
-        if (profile != null && characterProgress.ContainsKey(profile))
+        CharacterProfile targetProfile = profile;
+        if (targetProfile == null)
         {
-            characterProgress[profile]++; 
+            targetProfile = todayVisitor;
+            Debug.LogWarning($"[DayManager] O nó de AdvanceStory veio sem perfil! Usando o paciente atual ({targetProfile.characterName}) por segurança.");
+        }
 
-            if (characterProgress[profile] >= 3)
+        if (targetProfile != null && characterProgress.ContainsKey(targetProfile))
+        {
+            characterProgress[targetProfile]++; 
+            Debug.Log($"[DayManager] História de {targetProfile.characterName} avançou para a Fase {characterProgress[targetProfile]}");
+
+            if (characterProgress[targetProfile] >= 3)
             {
-                availableCharacters.Remove(profile);
-                Debug.Log($"{profile.characterName} has completed all surgeries and is out of the pool.");
+                availableCharacters.Remove(targetProfile);
+                Debug.Log($"[DayManager] {targetProfile.characterName} completou todas as cirurgias e saiu da roleta!");
+                
+                if (availableCharacters.Count == 0)
+                {
+                    Debug.Log("Todos os personagens foram atendidos! O próximo dia será o final.");
+                }
             }
         }
     }

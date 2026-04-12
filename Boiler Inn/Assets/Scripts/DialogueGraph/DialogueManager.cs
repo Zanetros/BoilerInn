@@ -54,20 +54,19 @@ public class DialogueManager : MonoBehaviour
 
     private void Start()
     {
+        if (runtimeGraph == null)
+        {
+            Debug.LogError("[ERRO DIALOGUE MANAGER] O campo 'Runtime Graph' está vazio no Inspector!");
+            return; 
+        }
+
         foreach (var node in runtimeGraph.AllNodes)
         {
             nodeLookup[node.NodeID] = node;
         }
 
-        if (SceneManager.GetActiveScene().name == "City")
-        {
-            EndDialogue();
-        }
-        else
-        {
-            if (!string.IsNullOrEmpty(runtimeGraph.EntryNodeID)) ShowNode(runtimeGraph.EntryNodeID);
-            else EndDialogue();
-        }
+        if (SceneManager.GetActiveScene().name == "City") EndDialogue();
+        else GoToNextNode(runtimeGraph.EntryNodeID);
     }
 
     public void Update()
@@ -76,11 +75,10 @@ public class DialogueManager : MonoBehaviour
         
         if (dialoguePanel.activeSelf && Mouse.current.leftButton.wasPressedThisFrame && currentNode != null && currentNode.Choices.Count == 0)
         {
-            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
-            else EndDialogue();
+            GoToNextNode(currentNode.NextNodeID);
         }
     }
-
+    
     private void ShowNode(string nodeID)
     {
         if (!nodeLookup.TryGetValue(nodeID, out RunTimeDialogueNode node))
@@ -91,155 +89,112 @@ public class DialogueManager : MonoBehaviour
     
         currentNode = node;
 
+        if (currentNode.isImpostorNode) HandleImpostorNode();
+        else if (currentNode.isConditionNode) HandleConditionNode();
+        else if (currentNode.isReceiveNode) HandleReceiveNode();
+        else if (currentNode.isAdvanceStoryNode) HandleAdvanceStoryNode();
+        else if (currentNode.isGoToCityNode) HandleGoToCityNode();
+        else if (!string.IsNullOrEmpty(currentNode.EventID)) HandleEventNode();
+        else if (currentNode.isCreditsNode) HandleCreditsNode();
+        else ProcessStandardDialogue(); 
+    }
+
+    private void HandleImpostorNode()
+    {
+        if (ImpostorManager.instance != null && currentNode.speakerProfile != null)
+        {
+            ImpostorManager.instance.PlantChip(currentNode.speakerProfile);
+        }
+        GoToNextNode(currentNode.NextNodeID);
+    }
+
+    private void HandleConditionNode()
+    {
+        bool conditionMet = false;
+        if (currentNode.conditionID == "ImpostorCaught")
+        {
+            conditionMet = ImpostorManager.isImpostorCaught;
+        }
+
+        string nextNode = conditionMet ? currentNode.NextNodeID_True : currentNode.NextNodeID_False;
+        GoToNextNode(nextNode);
+    }
+
+    private void HandleReceiveNode()
+    {
+        lastReceivedCyber = currentNode.cyberCost;
+        lastReceivedImplants = currentNode.implantsCost;
+        lastReceivedChips = currentNode.chipsCost;
+
+        if (CurrencyManager.instance != null)
+        {
+            CurrencyManager.instance.cybercurrency += currentNode.cyberCost;
+            CurrencyManager.instance.implants += currentNode.implantsCost;
+            CurrencyManager.instance.chips += currentNode.chipsCost;
+
+            CurrencyManager.instance.AddCybercurrency(0);
+            CurrencyManager.instance.AddImplants(0);
+            CurrencyManager.instance.AddChips(0);
+        }
+        GoToNextNode(currentNode.NextNodeID);
+    }
+
+    private void HandleAdvanceStoryNode()
+    {
+        if (DayManager.instance != null)
+        {
+            DayManager.instance.AdvanceCharacterStory(currentNode.advanceCharacterProfile);
+        }
+        GoToNextNode(currentNode.NextNodeID);
+    }
+
+    private void HandleGoToCityNode()
+    {
+        if (DayManager.instance != null) DayManager.instance.GoToCity();
+        else Debug.LogWarning("DayManager não encontrado na cena!");
+        
+        EndDialogue();
+    }
+
+    private void HandleEventNode()
+    {
+        bool hasEnoughCurrency = false;
+
+        if (CurrencyManager.instance != null)
+        {
+            hasEnoughCurrency = (CurrencyManager.instance.cybercurrency >= currentNode.cyberCost) &&
+                                (CurrencyManager.instance.implants >= currentNode.implantsCost) &&
+                                (CurrencyManager.instance.chips >= currentNode.chipsCost);
+        }
+
+        if (hasEnoughCurrency)
+        {
+            currentNode.NextNodeID = currentNode.NextNodeID_True;
+            dialoguePanel.SetActive(false);
+            
+            if (typingCoroutine != null) StopCoroutine(typingCoroutine);
+            if (SoundManager.instance != null) SoundManager.instance.FadeOutSFX(0.2f);
+            if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
+        }
+        else
+        {
+            GoToNextNode(currentNode.NextNodeID_False);
+        }
+    }
+
+    private void HandleCreditsNode()
+    {
+        EndDialogue(); 
+        
+        if (CreditsManager.instance != null) CreditsManager.instance.StartCredits();
+        else SceneManager.LoadScene("FinalScene");
+    }
+
+    private void ProcessStandardDialogue()
+    {
         if (currentNode.isHotelNode && HotelManager.instance != null)
         {
             HotelManager.instance.AddGuest(currentNode.guestID);
-        }
-
-        if (currentNode.isImpostorNode)
-        {
-            if (ImpostorManager.instance != null && currentNode.speakerProfile != null)
-            {
-                bool hadUsedChipBefore = ImpostorManager.instance.HasUsedChip;
-                ImpostorManager.instance.PlantChip(currentNode.speakerProfile);
-
-                if (!currentNode.speakerProfile.isImpostor && !hadUsedChipBefore)
-                {
-                    EndDialogue();
-                    return; 
-                }
-            }
-
-            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
-            else EndDialogue();
-            
-            return; 
-        }
-
-        if (currentNode.isConditionNode)
-        {
-            bool conditionMet = false;
-
-            if (currentNode.conditionID == "ImpostorCaught")
-            {
-                conditionMet = ImpostorManager.isImpostorCaught;
-            }
-
-            string nextNode = conditionMet ? currentNode.NextNodeID_True : currentNode.NextNodeID_False;
-
-            if (!string.IsNullOrEmpty(nextNode)) ShowNode(nextNode);
-            else EndDialogue();
-            
-            return; 
-        }
-
-        if (currentNode.isReceiveNode)
-        {
-            lastReceivedCyber = currentNode.cyberCost;
-            lastReceivedImplants = currentNode.implantsCost;
-            lastReceivedChips = currentNode.chipsCost;
-
-            if (CurrencyManager.instance != null)
-            {
-                CurrencyManager.instance.cybercurrency += currentNode.cyberCost;
-                CurrencyManager.instance.implants += currentNode.implantsCost;
-                CurrencyManager.instance.chips += currentNode.chipsCost;
-
-                CurrencyManager.instance.AddCybercurrency(0);
-                CurrencyManager.instance.AddImplants(0);
-                CurrencyManager.instance.AddChips(0);
-            }
-
-            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
-            else EndDialogue();
-            
-            return; 
-        }
-        
-        if (currentNode.isAdvanceStoryNode)
-        {
-            if (DayManager.instance != null)
-            {
-                DayManager.instance.AdvanceCharacterStory(currentNode.advanceCharacterProfile);
-            }
-
-            if (!string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
-            else EndDialogue();
-            
-            return; 
-        }
-        
-        if (currentNode.isGoToCityNode)
-        {
-            if (DayManager.instance != null)
-            {
-                DayManager.instance.GoToCity();
-            }
-            else
-            {
-                Debug.LogWarning("DayManager não encontrado na cena!");
-            }
-
-            // Desliga a interface de diálogo atual
-            EndDialogue();
-            return; 
-        }
-
-        // event node
-        if (!string.IsNullOrEmpty(currentNode.EventID))
-        {
-            bool hasEnoughCurrency = false;
-
-            // 1. Apenas CHECA a carteira para saber qual caminho da história seguir
-            if (CurrencyManager.instance != null)
-            {
-                hasEnoughCurrency = (CurrencyManager.instance.cybercurrency >= currentNode.cyberCost) &&
-                                    (CurrencyManager.instance.implants >= currentNode.implantsCost) &&
-                                    (CurrencyManager.instance.chips >= currentNode.chipsCost);
-            }
-
-            // 2. SE TEM DINHEIRO (O código que você mandou)
-            if (hasEnoughCurrency)
-            {
-                // Configura o caminho True para quando o minigame acabar
-                currentNode.NextNodeID = currentNode.NextNodeID_True;
-
-                dialoguePanel.SetActive(false);
-                
-                // Para a digitação do texto para não bugar no fundo
-                if (typingCoroutine != null) StopCoroutine(typingCoroutine);
-                
-                // Força o SoundManager a calar a boca do áudio na mesma hora!
-                if (SoundManager.instance != null) SoundManager.instance.FadeOutSFX(0.2f);
-
-                // Abre o minigame
-                if (MiniGameManager.instance != null) MiniGameManager.instance.TriggerMinigame(currentNode.EventID);
-                return; 
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(currentNode.NextNodeID_False)) ShowNode(currentNode.NextNodeID_False);
-                else EndDialogue();
-                
-                return;
-            }
-        }
-        
-        if (currentNode.isCreditsNode)
-        {
-            EndDialogue(); // Esconde a caixa de diálogo atual
-            
-            // Verifica se o painel de créditos está na mesma cena
-            if (CreditsManager.instance != null)
-            {
-                CreditsManager.instance.StartCredits();
-            }
-            else
-            {
-                // Se o CreditsManager não estiver na cena, presume-se que ele está na FinalScene, então carrega ela!
-                SceneManager.LoadScene("FinalScene");
-            }
-            return; 
         }
 
         dialoguePanel.SetActive(true);
@@ -247,17 +202,13 @@ public class DialogueManager : MonoBehaviour
         if (currentNode.speakerProfile != null)
         {
             speakerNameText.SetText(currentNode.speakerProfile.characterName);
-            
             if (currentNode.speakerProfile.characterSprite != null)
             {
                 characterSprite.gameObject.SetActive(true);
                 characterSprite.sprite = currentNode.speakerProfile.characterSprite;
                 characterSprite.SetNativeSize();
             }
-            else
-            {
-                characterSprite.gameObject.SetActive(false);
-            }
+            else characterSprite.gameObject.SetActive(false);
         }
         else
         {
@@ -267,24 +218,18 @@ public class DialogueManager : MonoBehaviour
     
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         
-        // Passa o texto do editor pelo tradutor de Tags
         string processedText = FormatDialogueText(currentNode.DialogueText);
         
         if (SoundManager.instance != null && !string.IsNullOrEmpty(processedText))
         {
             int textLength = processedText.Length;
-            AudioClip soundToPlay = null;
-
-            if (textLength <= shortTextLimit) soundToPlay = shortTypingSound;
-            else if (textLength <= mediumTextLimit) soundToPlay = mediumTypingSound;
-            else soundToPlay = longTypingSound;
+            AudioClip soundToPlay = (textLength <= shortTextLimit) ? shortTypingSound : 
+                                    (textLength <= mediumTextLimit) ? mediumTypingSound : longTypingSound;
 
             if (soundToPlay != null) SoundManager.instance.PlaySFX(soundToPlay);
         }
         
-        // Digita o texto formatado com os números reais
         typingCoroutine = StartCoroutine(TypeText(processedText));
-        
         RefreshChoices();
     }
 
@@ -300,32 +245,37 @@ public class DialogueManager : MonoBehaviour
                 
                 if (button.GetComponentInChildren<TextMeshProUGUI>() is TextMeshProUGUI buttonText)
                 {
-                    // Também formata os textos dos botões de escolha, caso você queira usar as tags lá!
                     buttonText.text = FormatDialogueText(choice.ChoiceText);
+                    
+                    string cleanChoiceText = choice.ChoiceText.Trim().ToLower();
 
-                    if (choice.ChoiceText == "Spy chip") 
+                    if (cleanChoiceText.Contains("spy chip") && ImpostorManager.instance != null && ImpostorManager.instance.HasUsedChip) 
                     {
-                        if (ImpostorManager.instance != null && ImpostorManager.instance.HasUsedChip)
-                        {
-                            button.interactable = false; 
-                        }
+                        button.interactable = false; 
                     }
                 }
 
                 button.onClick.AddListener(() =>
                 {
                     if (PauseMenu.IsGamePaused) return;
+                    
+                    string clickedCleanText = choice.ChoiceText.Trim().ToLower();
 
-                    if (currentNode != null && currentNode.isHotelNode && choice.ChoiceText == "Accept")
+                    if (currentNode != null && currentNode.isHotelNode && clickedCleanText.Contains("accept"))
                     {
                         if (HotelManager.instance != null) HotelManager.instance.AddGuest(currentNode.guestID);
                     }
 
-                    if (!string.IsNullOrEmpty(choice.DestinationNodeID)) ShowNode(choice.DestinationNodeID);
-                    else EndDialogue();
+                    GoToNextNode(choice.DestinationNodeID);
                 });
             }
         }
+    }
+    
+    private void GoToNextNode(string nextNodeID)
+    {
+        if (!string.IsNullOrEmpty(nextNodeID)) ShowNode(nextNodeID);
+        else EndDialogue();
     }
 
     private void EndDialogue()
@@ -334,22 +284,15 @@ public class DialogueManager : MonoBehaviour
         currentNode = null;
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         
-        foreach (Transform child in choiceButtonContainer) 
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (Transform child in choiceButtonContainer) Destroy(child.gameObject);
         
-        if (SoundManager.instance != null)
-        {
-            SoundManager.instance.FadeOutSFX(0.2f);
-        }
+        if (SoundManager.instance != null) SoundManager.instance.FadeOutSFX(0.2f);
     }
     
     public void ResumeDialogueAfterEvent()
     {
         dialoguePanel.SetActive(true);
-        if (currentNode != null && !string.IsNullOrEmpty(currentNode.NextNodeID)) ShowNode(currentNode.NextNodeID);
-        else EndDialogue();
+        GoToNextNode(currentNode?.NextNodeID);
     }
     
     public void SwitchDialogue(RuntimeDialogueGraph newGraph)
@@ -364,19 +307,17 @@ public class DialogueManager : MonoBehaviour
             nodeLookup[node.NodeID] = node;
         }
 
-        if (!string.IsNullOrEmpty(runtimeGraph.EntryNodeID)) ShowNode(runtimeGraph.EntryNodeID);
-        else EndDialogue();
+        GoToNextNode(runtimeGraph.EntryNodeID);
     }
     
     private string FormatDialogueText(string rawText)
     {
         if (string.IsNullOrEmpty(rawText)) return rawText;
 
-        string formattedText = rawText;
-        
-        formattedText = formattedText.Replace("{Cyber}", lastReceivedCyber.ToString());
-        formattedText = formattedText.Replace("{Implants}", lastReceivedImplants.ToString());
-        formattedText = formattedText.Replace("{Chips}", lastReceivedChips.ToString());
+        string formattedText = rawText
+            .Replace("{Cyber}", lastReceivedCyber.ToString())
+            .Replace("{Implants}", lastReceivedImplants.ToString())
+            .Replace("{Chips}", lastReceivedChips.ToString());
 
         if (CurrencyManager.instance != null)
         {
@@ -398,11 +339,7 @@ public class DialogueManager : MonoBehaviour
             yield return typingDelay; 
         }
         
-        if (SoundManager.instance != null)
-        {
-            SoundManager.instance.FadeOutSFX(0.2f);
-        }
-        
+        if (SoundManager.instance != null) SoundManager.instance.FadeOutSFX(0.2f);
         typingCoroutine = null;
     }
 }
