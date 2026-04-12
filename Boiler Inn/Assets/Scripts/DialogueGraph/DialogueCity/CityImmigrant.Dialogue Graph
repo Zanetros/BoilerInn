@@ -457,7 +457,7 @@ MonoBehaviour:
     - rid: 181753025873576758
       type: {class: 'Constant`1[[System.String, mscorlib]]', ns: Unity.GraphToolkit.Editor, asm: Unity.GraphToolkit.Internal.Editor}
       data:
-        m_Value: About her
+        m_Value: About him
     - rid: 181753025873576759
       type: {class: ChoiceNode, ns: , asm: Assembly-CSharp-Editor}
       data: 
