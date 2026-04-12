@@ -40,6 +40,8 @@ public class DialogueManager : MonoBehaviour
     private Dictionary<string, RunTimeDialogueNode> nodeLookup = new Dictionary<string, RunTimeDialogueNode>();
     public RunTimeDialogueNode currentNode { get; private set; }
     
+    private CharacterProfile activeSpeaker; 
+    
     private int lastReceivedCyber = 0;
     private int lastReceivedImplants = 0;
     private int lastReceivedChips = 0;
@@ -89,6 +91,13 @@ public class DialogueManager : MonoBehaviour
     
         currentNode = node;
 
+        // Se o nó tiver um personagem arrastado nele, o Manager atualiza a memória.
+        // Se for um nó de lógica vazio, ele continua lembrando de quem falou por último!
+        if (currentNode.speakerProfile != null)
+        {
+            activeSpeaker = currentNode.speakerProfile;
+        }
+
         if (currentNode.isImpostorNode) HandleImpostorNode();
         else if (currentNode.isConditionNode) HandleConditionNode();
         else if (currentNode.isReceiveNode) HandleReceiveNode();
@@ -101,9 +110,10 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleImpostorNode()
     {
-        if (ImpostorManager.instance != null && currentNode.speakerProfile != null)
+        // Agora usa o activeSpeaker! Mais seguro caso você esqueça de preencher no Grafo.
+        if (ImpostorManager.instance != null && activeSpeaker != null)
         {
-            ImpostorManager.instance.PlantChip(currentNode.speakerProfile);
+            ImpostorManager.instance.PlantChip(activeSpeaker);
         }
         GoToNextNode(currentNode.NextNodeID);
     }
@@ -122,6 +132,15 @@ public class DialogueManager : MonoBehaviour
 
     private void HandleReceiveNode()
     {
+        if (DayManager.instance != null && activeSpeaker != null)
+        {
+            if (DayManager.instance.charactersPaidToday.Contains(activeSpeaker))
+            {
+                GoToNextNode(currentNode.NextNodeID);
+                return;
+            }
+        }
+
         lastReceivedCyber = currentNode.cyberCost;
         lastReceivedImplants = currentNode.implantsCost;
         lastReceivedChips = currentNode.chipsCost;
@@ -136,6 +155,15 @@ public class DialogueManager : MonoBehaviour
             CurrencyManager.instance.AddImplants(0);
             CurrencyManager.instance.AddChips(0);
         }
+        
+        if (DayManager.instance != null && activeSpeaker != null)
+        {
+            if (!DayManager.instance.charactersPaidToday.Contains(activeSpeaker))
+            {
+                DayManager.instance.charactersPaidToday.Add(activeSpeaker);
+            }
+        }
+
         GoToNextNode(currentNode.NextNodeID);
     }
 
@@ -253,6 +281,17 @@ public class DialogueManager : MonoBehaviour
                     {
                         button.interactable = false; 
                     }
+
+                    bool isCollectButton = cleanChoiceText.Contains("collect tribute");
+
+                    // Avalia se o activeSpeaker está na lista de quem já pagou
+                    if (isCollectButton && DayManager.instance != null && activeSpeaker != null)
+                    {
+                        if (DayManager.instance.charactersPaidToday.Contains(activeSpeaker))
+                        {
+                            button.interactable = false;
+                        }
+                    }
                 }
 
                 button.onClick.AddListener(() =>
@@ -282,6 +321,8 @@ public class DialogueManager : MonoBehaviour
     {
         dialoguePanel.SetActive(false);
         currentNode = null;
+        activeSpeaker = null;
+        
         if (typingCoroutine != null) StopCoroutine(typingCoroutine);
         
         foreach (Transform child in choiceButtonContainer) Destroy(child.gameObject);

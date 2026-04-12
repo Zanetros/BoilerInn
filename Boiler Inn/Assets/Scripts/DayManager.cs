@@ -12,6 +12,9 @@ public class DayManager : MonoBehaviour
     [Header("Impostor State")]
     public CharacterProfile chippedCharacter = null;
 
+    [Header("Daily Limits")]
+    public List<CharacterProfile> charactersPaidToday = new List<CharacterProfile>();
+
     [Header("Story Loop System")]
     public List<CharacterProfile> availableCharacters = new List<CharacterProfile>();
     private List<CharacterProfile> originalCharacters = new List<CharacterProfile>();
@@ -47,7 +50,8 @@ public class DayManager : MonoBehaviour
     {
         currentDay = 0; 
         todayVisitor = null; 
-        chippedCharacter = null; // Reseta o uso do chip ao iniciar um novo jogo
+        chippedCharacter = null; 
+        charactersPaidToday.Clear(); // LIMPA A LISTA NO NOVO JOGO
         availableCharacters = new List<CharacterProfile>(originalCharacters);
         InitializeProgress(); 
         StartNewDay();  
@@ -56,6 +60,8 @@ public class DayManager : MonoBehaviour
     public void StartNewDay()
     {
         currentDay++;
+
+        charactersPaidToday.Clear(); // LIMPA A LISTA SEMPRE QUE O DIA VIRA!
 
         if (currentDay == 1)
         {
