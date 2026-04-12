@@ -555,9 +555,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b83fb66af8e89b468ef69fb70f95e5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CurrencyManager
-  cybercurrency: 999
-  implants: 999
-  chips: 999
+  cybercurrency: 9
+  implants: 9
+  chips: 9
 --- !u!4 &124110521
 Transform:
   m_ObjectHideFlags: 0
@@ -2460,6 +2460,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DayManager
   currentDay: 1
+  chippedCharacter: {fileID: 0}
+  charactersPaidToday: []
   availableCharacters:
   - {fileID: 11400000, guid: 396eaf4e331e1b949bbaa8035429929a, type: 2}
   - {fileID: 11400000, guid: 0504537459c06374ebedd3d50f9cf677, type: 2}
