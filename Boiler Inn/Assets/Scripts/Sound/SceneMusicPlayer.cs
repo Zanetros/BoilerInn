@@ -7,10 +7,19 @@ public class SceneMusicPlayer : MonoBehaviour
 
     private void Start()
     {
-        // Assim que a cena carregar, pede para o SoundManager tocar a música
-        if (SoundManager.instance != null && sceneMusic != null)
+        if (SoundManager.instance != null)
         {
-            SoundManager.instance.PlayMusic(sceneMusic);
+            if (sceneMusic != null)
+            {
+                SoundManager.instance.PlayMusic(sceneMusic, true);
+                SoundManager.instance.musicSource.loop = true;
+            }
+            else
+            {
+                SoundManager.instance.StartPlaylist();
+                SoundManager.instance.musicSource.loop = false;
+                SoundManager.instance.isPlaylistPlaying = true;
+            }
         }
         else if (SoundManager.instance == null)
         {
