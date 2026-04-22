@@ -2333,7 +2333,7 @@ AudioSource:
   m_PlayOnAwake: 1
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -3106,6 +3106,12 @@ MonoBehaviour:
   musicSource: {fileID: 1043396582}
   sfxSource: {fileID: 1092508584}
   fadeDuration: 3
+  isPlaylistPlaying: 1
+  playlist:
+  - {fileID: 8300000, guid: 0ad58144388ce7544bfd5d0c7a79d939, type: 3}
+  - {fileID: 8300000, guid: a9d2076f54bc40047ab600dec30ffaf0, type: 3}
+  - {fileID: 8300000, guid: cb97ef1a1f2237140957aa3f9dbf6881, type: 3}
+  currentMusic: {fileID: 0}
 --- !u!4 &1471853714
 Transform:
   m_ObjectHideFlags: 0

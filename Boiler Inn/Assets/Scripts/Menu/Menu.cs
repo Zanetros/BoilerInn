@@ -13,24 +13,12 @@ public class Menu : MonoBehaviour
     {
         if (SoundManager.instance != null)
         {
-            // Pede ao SoundManager para aplicar os volumes salvos
             SoundManager.instance.LoadVolume();
-      
-            // Toca a música do menu com segurança
-            if (menuMusic != null)
-            {
-                SoundManager.instance.PlayMusic(menuMusic);
-            }
         }
     }
   
-    // ==============================================================
-    // AQUI ESTÁ A MÁGICA: O novo PlayGame que avisa o Cérebro Imortal
-    // ==============================================================
     public void PlayGame()
     {
-        // Em vez de só carregar a cena às cegas, nós mandamos o DayManager 
-        // limpar o histórico de pacientes, encher a urna de novo e começar o Dia 1.
         if (DayManager.instance != null)
         {
             DayManager.instance.StartGameFromMenu();
@@ -40,7 +28,6 @@ public class Menu : MonoBehaviour
             Debug.LogError("ERRO: DayManager não encontrado na cena do Menu!");
         }
     }
-    // ==============================================================
   
     public void QuitGame()
     {
